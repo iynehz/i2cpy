@@ -1,0 +1,6 @@
+pytest
+mypy
+
+sphinx-rtd-theme
+sphinx-autodoc-typehints
+sphinx-markdown-builder
