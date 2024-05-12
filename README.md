@@ -1,24 +1,9 @@
 # Python I2C library supporting multiple driver implementations
 
-> ##### Contents
-> 
-> * [Python I2C library supporting multiple driver implementations](#python-i2c-library-supporting-multiple-driver-implementations)
->   * [Introduction](#module-i2cpy)
->   * [Class I2C](#class-i2c)
->     * [Constructor](#constructor)
->     * [General methods](#general-methods)
->     * [Standard bus operations](#standard-bus-operations)
->     * [Memory operations](#memory-operations)
->   * [Supported I2C drivers](#supported-i2c-drivers)
->     * [ch341](#ch341)
 <div>
    <img src="https://img.shields.io/badge/python-3.7+-blue.svg" alt="python"/>
-   <a href="https://img.shields.io/github/license/iynehz/i2cpy.svg">
-      <img src="https://img.shields.io/github/license/iynehz/i2cpy.svg" alt="license"/>
-   </a>
-   <a href="https://img.shields.io/pypi/v/i2cpy.svg">
-      <img src="https://img.shields.io/pypi/v/i2cpy.svg" alt="pypi"/>
-   </a>
+   <a href="https://pypi.org/project/i2cpy/"><img src="https://img.shields.io/pypi/v/i2cpy.svg" alt="pypi"/></a>
+   <a href="https://github.com/iynehz/i2cpy/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="license"/></a>
    <img src="https://img.shields.io/badge/code%20style-black-black.svg" alt="Code style: black"/>
    <img src="https://img.shields.io/badge/mypy-checked-green.svg" alt="mypy"/>
 </div>
@@ -29,8 +14,8 @@ I2C is a two-wire protocol for communicating between devices. At the
 physical level it consists of 2 wires: SCL and SDA, the clock and data lines
 respectively.
 
-I2C objects are created attached to a specific bus. They can be initialised
-when created, or initialised later on.
+I2C objects are created attached to a specific bus. They can be initialized
+when created, or initialized later on.
 
 This library is designed to support different I2C driver implementations.
 It’s interface is similar to MicroPython’s `machine.I2C` as well as CircuitPython’s
@@ -48,7 +33,7 @@ i2c.readfrom(42, 4)              # read 4 bytes from peripheral with 7-bit addre
 
 i2c.readfrom_mem(42, 8, 3)       # read 3 bytes from memory of peripheral 42,
                                  #   starting at memory address 8 in the peripheral
-i2c.writeto_mem(42, 2, b'\x10') # write 1 byte to memory of peripheral 42,
+i2c.writeto_mem(42, 2, b'\x10')  # write 1 byte to memory of peripheral 42,
                                  #   starting at memory address 2 in the peripheral
 ```
 
@@ -56,13 +41,13 @@ i2c.writeto_mem(42, 2, b'\x10') # write 1 byte to memory of peripheral 42,
 
 ### Constructor
 
-#### I2C.\_\_init_\_(id=0, \*, driver=None, freq=400000, auto_init=True, \*\*kwargs)
+#### I2C.\_\_init_\_(\*, id=None, driver=None, freq=400000, auto_init=True, \*\*kwargs)
 
 Constructor.
 
 * **Parameters:**
-  * **id** (`int`) – Device id number, defaults to 0. How this is used depends on
-    driver implementation.
+  * **id** (`Union`[`int`, `str`, `None`]) – Identifies a particular I2C peripheral. Allowed values depend
+    on the particular driver implementation.
   * **freq** (`int`) – I2C bus baudrate, defaults to 400000
   * **driver** (`Optional`[`str`]) – I2C driver name. It corresponds to the I2C driver sub
     module name shipped with this library. For example “foo” means module
@@ -75,7 +60,7 @@ Constructor.
 
 #### I2C.init()
 
-Initialise the I2C bus.
+Initialize the I2C bus.
 
 #### I2C.deinit()
 
@@ -166,26 +151,44 @@ The CH341 series chip (like CH341A) is USB bus converter which converts USB to U
 port, and common synchronous serial communication interfaces (I2C, SPI).
 The chip is manufactured by the company [Qinheng Microelectronics](https://wch-ic.com/).
 
+The ch341 driver shipped with this library is a Python interface to CH341’s
+official DLLs.
+
 You need the driver DLL files, which are downloadable from Qinheng’s website.
 
-* Windows: [https://www.wch-ic.com/downloads/CH341PAR_ZIP.html](https://www.wch-ic.com/downloads/CH341PAR_ZIP.html)
-* Linux: [https://www.wch-ic.com/downloads/CH341PAR_LINUX_ZIP.html](https://www.wch-ic.com/downloads/CH341PAR_LINUX_ZIP.html)
+Windows: [https://www.wch-ic.com/downloads/CH341PAR_ZIP.html](https://www.wch-ic.com/downloads/CH341PAR_ZIP.html)
 
 On Windows it’s recommended to place them
 under Windows System32 folder. Or if you place them under a different directory,
 you can add that directory to PATH environment variable.
+
+Linux: [https://www.wch-ic.com/downloads/CH341PAR_LINUX_ZIP.html](https://www.wch-ic.com/downloads/CH341PAR_LINUX_ZIP.html)
+
+On Linux you need to build the kernel module from source under the downloaded
+zipball’s driver sub-directory like,
+
+```bash
+$ cd driver
+$ sudo make && sudo make install
+```
+
+Also you need to either place the libch347.so file for your platform to system
+supported path like /usr/local/lib, or you make the so file loadable by adding
+its directory to LD_LIBRARY_PATH environment variable.
+
+MacOS: [https://www.wch-ic.com/download/CH341SER_MAC_ZIP.html](https://www.wch-ic.com/download/CH341SER_MAC_ZIP.html)
+
+I don’t use this library on Mac myself. But let me know if it does not work, and
+I can give it a try on Mac.
 
 Example usage:
 
 ```python
 from i2cpy import I2C
 
-i2c = I2C(0, driver="ch341")                    # explicitly specify driver
+i2c = I2C(driver="ch341")                       # explicitly specify driver
 
-# override dll name on Windows
-i2c = I2C(0, driver="ch341", dll="CH341DLL")
+i2c = I2C(0, driver="ch341")                    # override usb id on Windows
 
-# override dll name on Linux
-i2c = I2C(0, driver="ch341", dll="libch347.so")          # so filename
-i2c = I2C(0, driver="ch341", dll="/path/to/libch347.so") # full so file path
+i2c = I2C("/dev/ch34x_pis0", driver="ch341")    # override usb device on Linux
 ```

@@ -9,17 +9,22 @@ dependencies = [
 ]
 requires-python = ">=3.7"
 authors = [
-  {name = "Zhenyi Zhou", email = "zhouzhen1@gmail.com"}
+  {name = "Zhenyi Zhou", email = "iynehz@163.com"}
 ]
 description = "Python I2C library supporting multiple driver implementations"
 readme = "README.md"
-license = {file = "LICENSE.txt"}
+license = {file = "LICENSE"}
 keywords = ["i2c", "ch341", "ch341a"]
 classifiers = [
   "Development Status :: 4 - Beta",
   "Programming Language :: Python"
 ]
 dynamic = ["version"]
+
+[project.urls]
+Homepage = "https://github.com/iynehz/i2cpy"
+Documentation = "https://i2cpy.readthedocs.io/en/latest/"
+Repository = "https://github.com/iynehz/i2cpy"
 
 [tool.setuptools.dynamic]
 version = { attr = "i2cpy.__version__" }

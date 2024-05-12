@@ -2,18 +2,17 @@
 Python I2C library supporting multiple driver implementations
 -------------------------------------------------------------
 
-.. contents::
+.. only:: html
+
+   .. contents::
+
 
 .. raw:: html
 
    <div>
       <img src="https://img.shields.io/badge/python-3.7+-blue.svg" alt="python"/>
-      <a href="https://img.shields.io/github/license/iynehz/i2cpy.svg">
-         <img src="https://img.shields.io/github/license/iynehz/i2cpy.svg" alt="license"/>
-      </a>
-      <a href="https://img.shields.io/pypi/v/i2cpy.svg">
-         <img src="https://img.shields.io/pypi/v/i2cpy.svg" alt="pypi"/>
-      </a>
+      <a href="https://pypi.org/project/i2cpy/"><img src="https://img.shields.io/pypi/v/i2cpy.svg" alt="pypi"/></a>
+      <a href="https://github.com/iynehz/i2cpy/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="license"/></a>
       <img src="https://img.shields.io/badge/code%20style-black-black.svg" alt="Code style: black"/>
       <img src="https://img.shields.io/badge/mypy-checked-green.svg" alt="mypy"/>
    </div>
@@ -65,6 +64,9 @@ The CH341 series chip (like CH341A) is USB bus converter which converts USB to U
 port, and common synchronous serial communication interfaces (I2C, SPI).
 The chip is manufactured by the company `Qinheng Microelectronics <https://wch-ic.com/>`_.
 
+The ch341 driver shipped with this library is a Python interface to CH341's
+official DLLs.
+
 You need the driver DLL files, which are downloadable from Qinheng's website.
 
 Windows: `<https://www.wch-ic.com/downloads/CH341PAR_ZIP.html>`_
@@ -83,9 +85,14 @@ zipball's `driver` sub-directory like,
    $ cd driver
    $ sudo make && sudo make install
 
-Also you need to either place the `libch347.so` file to system supported path
-like `/usr/local/lib` or you make the so file loadable by adding its directory
-to `LD_LIBRARY_PATH` environment variable.
+Also you need to either place the `libch347.so` file for your platform to system
+supported path like `/usr/local/lib`, or you make the so file loadable by adding
+its directory to `LD_LIBRARY_PATH` environment variable.
+
+MacOS: `<https://www.wch-ic.com/download/CH341SER_MAC_ZIP.html>`_
+
+I don't use this library on Mac myself. But let me know if it does not work, and
+I can give it a try on Mac.
 
 Example usage:
 

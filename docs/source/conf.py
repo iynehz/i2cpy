@@ -24,32 +24,10 @@ extensions = [
     "sphinx.ext.coverage",
     "sphinx_autodoc_typehints",
     "sphinx_markdown_builder",
+    "sphinx_rtd_theme",
 ]
-
-# autodoc_default_options = {
-#    'members': False,
-#    'member-order': 'bysource',
-#    'special-members': '__init__',
-#    'undoc-members': True,
-#    'exclude-members': '__weakref__'
-# }
 
 templates_path = ["_templates"]
 exclude_patterns = []
 
-
-# -- Options for HTML output -------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
-
-# Readthedocs theme
-# on_rtd is whether on readthedocs.org, this line of code grabbed from docs.readthedocs.org...
-on_rtd = os.environ.get("READTHEDOCS", None) == "True"
-if not on_rtd:  # only import and set the theme if we're building docs locally
-    import sphinx_rtd_theme
-
-    html_theme = "sphinx_rtd_theme"
-    html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
-html_css_files = ["readthedocs-custom.css"]  # Override some CSS settings
-
-# html_theme = "alabaster"
-html_static_path = ["_static"]
+html_theme = "sphinx_rtd_theme"

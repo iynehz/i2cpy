@@ -22,7 +22,7 @@ Example usage:
 
     i2c.readfrom_mem(42, 8, 3)       # read 3 bytes from memory of peripheral 42,
                                      #   starting at memory address 8 in the peripheral
-    i2c.writeto_mem(42, 2, b'\\x10') # write 1 byte to memory of peripheral 42,
+    i2c.writeto_mem(42, 2, b'\\x10')  # write 1 byte to memory of peripheral 42,
                                      #   starting at memory address 2 in the peripheral
 
 
@@ -44,7 +44,7 @@ from i2cpy.driver.abc import i2c_addr_byte, to_buffer
 from i2cpy.errors import *
 
 
-__version__ = "0.1.0b1"
+from i2cpy._version import __version__
 
 
 log = logging.getLogger(__name__)

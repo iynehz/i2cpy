@@ -1,6 +1,9 @@
+typing-extensions
+
 pytest
 mypy
 
-sphinx-rtd-theme
-sphinx-autodoc-typehints
-sphinx-markdown-builder
+-r docs/requirements.txt
+
+build
+twine
