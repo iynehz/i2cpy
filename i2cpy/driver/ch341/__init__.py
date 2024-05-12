@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from ctypes import c_byte, c_ulong
+import os
+from ctypes import c_byte, c_ulong, create_string_buffer
 from enum import Enum
 from typing import List, Optional, Union
 
@@ -35,7 +36,7 @@ class BaudRate(Enum):
 
 class CH341(I2CDriverBase):
     def __init__(
-        self, id: int = 0, *, freq: int | float = 400000, dll: Optional[str] = None
+        self, id: int | str | Buffer = 0, *, freq: int | float = 400000, dll: Optional[str] = None
     ):
         """_summary_
 
@@ -43,20 +44,46 @@ class CH341(I2CDriverBase):
         :param freq: I2C bus baudrate, defaults to 400000
         :param dll: CH341 DLL name
         """
-        self.id = id
+        if os.name == "nt":
+            self._fd = id
+        else:
+            if isinstance(id, str):
+                self.device_path = id.encode("utf-8")
+            elif isinstance(id, Buffer):
+                self.device_path = bytes(id)
+            else:
+                pass
+            self._fd = -1
         self.baudrate = BaudRate.from_number(freq)
 
     def init(self):
         """Initialise the I2C bus."""
-        if ch341dll.CH341OpenDevice(self.id) != -1:
-            rslt = ch341dll.CH341SetStream(self.id, self.baudrate.value)
+        if os.name == "nt":
+            self._init_nt()
+        else:
+            self._init_posix()
+
+    def _init_nt(self):
+        if ch341dll.CH341OpenDevice(self._fd) != -1:
+            rslt = ch341dll.CH341SetStream(self._fd, self.baudrate.value)
             self._check_result(rslt)
         else:
-            raise OSError("CH341OpenDevice(%s) failed!" % self.id)
+            raise OSError("CH341OpenDevice(%s) failed!" % self._fd)
+
+    def _init_posix(self):
+        buf = create_string_buffer(self.device_path)
+        fd = ch341dll.CH341OpenDevice(buf)
+        if fd > 0:
+            self._fd = fd
+            rslt = ch341dll.CH341SetStream(self._fd, self.baudrate.value)
+            print(rslt)
+            self._check_result(rslt)
+        else:
+            raise OSError("CH341OpenDevice(%s) failed!" % self.device_path)
 
     def deinit(self):
         """Close the I2C bus."""
-        rslt = ch341dll.CH341CloseDevice(self.id)
+        rslt = ch341dll.CH341CloseDevice(self._fd)
         self._check_result(rslt)
 
     def _writeread_into(self, buf: Buffer, rbuf: Optional[bytearray]):
@@ -76,7 +103,7 @@ class CH341(I2CDriverBase):
         else:
             nbytes = len(rbuf)
             obuf = (c_byte * nbytes).from_buffer(rbuf)
-        rslt = ch341dll.CH341StreamI2C(self.id, len(ibuf), ibuf, nbytes, obuf)
+        rslt = ch341dll.CH341StreamI2C(self._fd, len(ibuf), ibuf, nbytes, obuf)
         self._check_result(rslt)
 
     def _write(self, buf: Buffer):
@@ -125,7 +152,7 @@ class CH341(I2CDriverBase):
             mCH341A_CMD_I2C_STREAM, mCH341A_CMD_I2C_STM_STA, mCH341A_CMD_I2C_STM_END
         )
         iolength = (c_ulong * 1)(len(buf))
-        rslt = ch341dll.CH341WriteData(self.id, buf, iolength)
+        rslt = ch341dll.CH341WriteData(self._fd, buf, iolength)
         self._check_result(rslt)
 
     def _stop(self):
@@ -136,7 +163,7 @@ class CH341(I2CDriverBase):
             mCH341A_CMD_I2C_STREAM, mCH341A_CMD_I2C_STM_STO, mCH341A_CMD_I2C_STM_END
         )
         iolength = (c_ulong * 1)(len(buf))
-        rslt = ch341dll.CH341WriteData(self.id, buf, iolength)
+        rslt = ch341dll.CH341WriteData(self._fd, buf, iolength)
         self._check_result(rslt)
 
     def _out_byte_check_ack(self, obyte: int) -> bool:
@@ -149,7 +176,7 @@ class CH341(I2CDriverBase):
         ibuf = (c_byte * mCH341_PACKET_LENGTH)()
         ilen = (c_ulong * 1)(0)
         rslt = ch341dll.CH341WriteRead(
-            self.id, len(buf), buf, mCH341A_CMD_I2C_STM_MAX, 1, ilen, ibuf
+            self._fd, len(buf), buf, mCH341A_CMD_I2C_STM_MAX, 1, ilen, ibuf
         )
         self._check_result(rslt)
         return ilen[0] > 0 and ibuf[ilen[0] - 1] & 0x80 == 0
@@ -166,7 +193,6 @@ class CH341(I2CDriverBase):
     def _check_result(cls, result: int):
         if not result:
             raise I2COperationFailedError()
-
 
 def driver_class() -> I2CDriverBase:
     return CH341
