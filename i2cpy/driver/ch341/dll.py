@@ -5,7 +5,7 @@ import re
 if os.name == "nt":
     from ctypes import windll, CDLL
 else:
-    from ctypes import cdll, CDLL, c_char_p
+    from ctypes import cdll, CDLL, c_char_p, c_int32, c_uint8
 
 
 def load() -> CDLL:
@@ -36,7 +36,10 @@ def load() -> CDLL:
                 f = getattr(dll, fname2)
                 setattr(dll, fname, f)
 
-        dll.CH341OpenDevice.argtypes = c_char_p,
+        dll.CH34xOpenDevice.argtypes = (c_char_p,)
+        dll.CH341OpenDevice.argtypes = (c_char_p,)
+        dll.CH34xSetStream.argtypes = (c_int32, c_uint8)
+        dll.CH341SetStream.argtypes = (c_int32, c_uint8)
 
         return dll
 

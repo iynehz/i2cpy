@@ -2,8 +2,8 @@
 physical level it consists of 2 wires: SCL and SDA, the clock and data lines
 respectively.
 
-I2C objects are created attached to a specific bus. They can be initialised
-when created, or initialised later on.
+I2C objects are created attached to a specific bus. They can be initialized
+when created, or initialized later on.
 
 This library is designed to support different I2C driver implementations.
 It's interface is similar to MicroPython's ``machine.I2C`` as well as CircuitPython's
@@ -53,8 +53,8 @@ log = logging.getLogger(__name__)
 class I2C:
     def __init__(
         self,
-        id: int = 0,
         *,
+        id: Optional[int | str] = None,
         driver: Optional[str] = None,
         freq: int = 400000,
         auto_init: bool = True,
@@ -62,8 +62,8 @@ class I2C:
     ):
         """Constructor.
 
-        :param id: Device id number, defaults to 0. How this is used depends on
-            driver implementation.
+        :param id: Identifies a particular I2C peripheral. Allowed values depend
+            on the particular driver implementation.
         :param freq: I2C bus baudrate, defaults to 400000
         :param driver: I2C driver name. It corresponds to the I2C driver sub
             module name shipped with this library. For example "foo" means module
@@ -81,13 +81,13 @@ class I2C:
         except (ModuleNotFoundError, ImportError) as exc:
             raise I2CInvalidDriverError(self.driver_name) from exc
 
-        self.driver = self.driver_module.driver_class()(id, freq=freq, **kwargs)
+        self.driver = self.driver_module.driver_class()(id=id, freq=freq, **kwargs)
 
         if auto_init:
             self.init()
 
     def init(self):
-        """Initialise the I2C bus."""
+        """Initialize the I2C bus."""
         self.driver.init()
 
     def deinit(self):

@@ -67,13 +67,25 @@ The chip is manufactured by the company `Qinheng Microelectronics <https://wch-i
 
 You need the driver DLL files, which are downloadable from Qinheng's website.
 
-* Windows: `<https://www.wch-ic.com/downloads/CH341PAR_ZIP.html>`_
-
-* Linux: `<https://www.wch-ic.com/downloads/CH341PAR_LINUX_ZIP.html>`_
+Windows: `<https://www.wch-ic.com/downloads/CH341PAR_ZIP.html>`_
 
 On Windows it's recommended to place them
 under Windows System32 folder. Or if you place them under a different directory,
 you can add that directory to `PATH` environment variable.
+
+Linux: `<https://www.wch-ic.com/downloads/CH341PAR_LINUX_ZIP.html>`_
+
+On Linux you need to build the kernel module from source under the downloaded
+zipball's `driver` sub-directory like,
+
+.. code-block:: bash
+
+   $ cd driver
+   $ sudo make && sudo make install
+
+Also you need to either place the `libch347.so` file to system supported path
+like `/usr/local/lib` or you make the so file loadable by adding its directory
+to `LD_LIBRARY_PATH` environment variable.
 
 Example usage:
 
@@ -81,12 +93,9 @@ Example usage:
 
    from i2cpy import I2C
 
-   i2c = I2C(0, driver="ch341")                    # explicitly specify driver
+   i2c = I2C(driver="ch341")                       # explicitly specify driver
 
-   # override dll name on Windows
-   i2c = I2C(0, driver="ch341", dll="CH341DLL")
+   i2c = I2C(0, driver="ch341")                    # override usb id on Windows
 
-   # override dll name on Linux
-   i2c = I2C(0, driver="ch341", dll="libch347.so")          # so filename
-   i2c = I2C(0, driver="ch341", dll="/path/to/libch347.so") # full so file path
+   i2c = I2C("/dev/ch34x_pis0", driver="ch341")    # override usb device on Linux
    
