@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 from ctypes import c_byte, c_ulong, create_string_buffer
 from enum import Enum
-from typing import List, Optional, Union
+from typing import List, Optional, Type
 
 try:
     from collections.abc import Buffer
@@ -36,7 +36,11 @@ class BaudRate(Enum):
 
 class CH341(I2CDriverBase):
     def __init__(
-        self, id: int | str | Buffer = 0, *, freq: int | float = 400000, dll: Optional[str] = None
+        self,
+        id: int | str | Buffer = 0,
+        *,
+        freq: int | float = 400000,
+        dll: Optional[str] = None,
     ):
         """_summary_
 
@@ -91,11 +95,11 @@ class CH341(I2CDriverBase):
         and stores into `rbuf`. The number of bytes read is the length of buf.
         """
         try:
-            ibuf = (c_byte * len(buf)).from_buffer(buf)
+            ibuf = (c_byte * len(memoryview(buf))).from_buffer(buf)
         except TypeError:
             # When buf is bytes, above gets "TypeError: underlying buffer is not writable".
             # In this case we retry with from_buffer_copy()
-            ibuf = (c_byte * len(buf)).from_buffer_copy(buf)
+            ibuf = (c_byte * len(memoryview(buf))).from_buffer_copy(buf)
 
         if rbuf is None:
             nbytes = 0
@@ -141,7 +145,7 @@ class CH341(I2CDriverBase):
         memory address specified by memaddr. The number of bytes read is the
         length of buf.
         """
-        wbuf = bytes(i2c_addr_byte(addr)) + to_buffer([memaddr])
+        wbuf = bytes(i2c_addr_byte(addr)) + to_buffer(memaddr)
         self._writeread_into(wbuf, buf)
 
     def _start(self):
@@ -194,5 +198,6 @@ class CH341(I2CDriverBase):
         if not result:
             raise I2COperationFailedError()
 
-def driver_class() -> I2CDriverBase:
+
+def driver_class() -> Type[I2CDriverBase]:
     return CH341

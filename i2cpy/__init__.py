@@ -176,7 +176,7 @@ class I2C:
         :param buf: bytes to write
         :param addrsize: _description_, defaults to 8
         """
-        wbuf = bytes(to_buffer([memaddr])) + buf
+        wbuf = bytes(to_buffer(memaddr)) + buf
         self.writeto(addr, wbuf)
 
     def scan(self, start: int = 0x08, stop: int = 0x77) -> List[int]:

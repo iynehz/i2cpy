@@ -17,7 +17,7 @@ def i2c_addr_byte(addr: int | Buffer, is_read: bool = False) -> bytes:
     if isinstance(addr, int):
         addr = addr << 1
     else:
-        addr = int(addr[0]) << 1
+        addr = int(memoryview(addr)[0]) << 1
 
     if is_read:
         addr |= 1
@@ -25,7 +25,7 @@ def i2c_addr_byte(addr: int | Buffer, is_read: bool = False) -> bytes:
     return addr.to_bytes(1)
 
 
-def to_buffer(x: Buffer | List[int]) -> Buffer:
+def to_buffer(x: Buffer | List[int] | int) -> Buffer:
     """Convert input data to `Buffer` (`bytes`).
 
     :param x: input data
@@ -33,8 +33,9 @@ def to_buffer(x: Buffer | List[int]) -> Buffer:
     """
     if isinstance(x, Buffer):
         return x
-
-    return bytes(x)
+    if isinstance(x, list):
+        return bytes(x)
+    return bytes([x])
 
 
 class I2CDriverBase(ABC):
@@ -52,8 +53,6 @@ class I2CDriverBase(ABC):
         :param freq: I2C bus baudrate, defaults to 400000
         :param auto_init: Call `init()` on object initialization, defaults to True
         """
-        self.id = id
-        self.baudrate = freq
 
     @abstractmethod
     def init(self):
