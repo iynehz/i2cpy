@@ -6,7 +6,7 @@ try:
 except ImportError:
     from typing_extensions import Buffer
 
-from ..errors import *
+from ..errors import I2CMemoryAddressSizeError
 
 
 def i2c_addr_byte(addr: int | Buffer, is_read: bool = False) -> bytes:

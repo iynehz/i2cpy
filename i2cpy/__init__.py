@@ -41,10 +41,10 @@ except ImportError:
     from typing_extensions import Buffer
 
 from i2cpy.driver.abc import memaddr_to_bytes
-from i2cpy.errors import *
+from i2cpy.errors import I2CInvalidDriverError
 
 
-from i2cpy._version import __version__
+from i2cpy._version import __version__  # noqa: F401
 
 
 log = logging.getLogger(__name__)

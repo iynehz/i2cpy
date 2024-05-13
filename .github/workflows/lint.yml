@@ -3,7 +3,7 @@ name: Lint
 on: [push]
 
 jobs:
-  build:
+  mypy:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -18,3 +18,23 @@ jobs:
     - name: Run mypy
       run: |
         mypy i2cpy
+
+  ruff:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.7", "3.12"]
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install ruff
+    - name: Analysing the code with ruff
+      run: |
+        ruff check i2cpy
+

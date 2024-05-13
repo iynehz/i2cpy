@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import os
+import sys
 from ctypes import c_byte, c_int32, c_ulong, c_uint8, create_string_buffer
 from enum import Enum
 from typing import List, Optional, Type
@@ -11,7 +11,15 @@ except ImportError:
     from typing_extensions import Buffer
 
 from .dll import ch341dll
-from .constants import *
+from .constants import (
+    mCH341_PACKET_LENGTH,
+    mCH341A_CMD_I2C_STREAM,
+    mCH341A_CMD_I2C_STM_STA,
+    mCH341A_CMD_I2C_STM_STO,
+    mCH341A_CMD_I2C_STM_OUT,
+    mCH341A_CMD_I2C_STM_MAX,
+    mCH341A_CMD_I2C_STM_END,
+)
 
 from ..abc import I2CDriverBase, i2c_addr_byte, to_buffer, memaddr_to_bytes
 from ...errors import I2COperationFailedError
@@ -44,12 +52,12 @@ class CH341(I2CDriverBase):
         :param dll: CH341 DLL name
         """
         if id is None:
-            if os.name == "nt":
+            if sys.platform == "win32":
                 id = 0
             else:
                 id = "/dev/ch34x_pis0"
 
-        if os.name == "nt":
+        if sys.platform == "win32":
             self._fd = id
         else:
             self.device_path = id
@@ -58,7 +66,7 @@ class CH341(I2CDriverBase):
 
     def init(self):
         """Initialize the I2C bus."""
-        if os.name == "nt":
+        if sys.platform == "win32":
             self._init_nt()
         else:
             self._init_posix()
