@@ -6,6 +6,8 @@ try:
 except ImportError:
     from typing_extensions import Buffer
 
+from ..errors import *
+
 
 def i2c_addr_byte(addr: int | Buffer, is_read: bool = False) -> bytes:
     """Convert 7-bit I2C peripheral address to bytes.
@@ -36,6 +38,20 @@ def to_buffer(x: Buffer | List[int] | int) -> Buffer:
     if isinstance(x, list):
         return bytes(x)
     return bytes([x])
+
+
+def memaddr_to_bytes(memaddr: int, addrsize: int = 8) -> bytes:
+    """Convert memory address to `bytes`.
+
+    :param memaddr: memory address in integer.
+    :param addrsize: must be one of 8, 16, 24, 32. Default is 8.
+    :return: memory address in `bytes`
+    """
+    if addrsize & 0x7 != 0 or addrsize > 32 or addrsize < 8:
+        raise I2CMemoryAddressSizeError(addrsize)
+    return bytes(
+        to_buffer([(memaddr >> i) & 0xFF for i in range(addrsize - 8, -1, -8)])
+    )
 
 
 class I2CDriverBase(ABC):
@@ -74,7 +90,7 @@ class I2CDriverBase(ABC):
         return bytes(buf)
 
     @abstractmethod
-    def readfrom_into(self, addr: int | Buffer, buf: bytearray):
+    def readfrom_into(self, addr: int, buf: bytearray):
         """Read into buf from the peripheral specified by addr.
         The number of bytes read will be the length of buf.
 
@@ -83,7 +99,7 @@ class I2CDriverBase(ABC):
         """
 
     @abstractmethod
-    def writeto(self, addr: int | Buffer, buf: Buffer):
+    def writeto(self, addr: int, buf: Buffer):
         """Write the bytes from buf to the peripheral specified by addr.
 
         :param addr: I2C peripheral deivce address
@@ -93,8 +109,8 @@ class I2CDriverBase(ABC):
     @abstractmethod
     def readfrom_mem_into(
         self,
-        addr: int | Buffer,
-        memaddr: int | Buffer,
+        addr: int,
+        memaddr: int,
         buf: bytearray,
         *,
         addrsize: int = 8,
@@ -105,7 +121,7 @@ class I2CDriverBase(ABC):
         """
 
     @abstractmethod
-    def check_device(self, addr: int | Buffer) -> bool:
+    def check_device(self, addr: int) -> bool:
         """Checks if I2C peripheral device exists at given address.
 
         :param addr: I2C peripheral device address

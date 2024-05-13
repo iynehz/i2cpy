@@ -11,3 +11,9 @@ class I2CInvalidDriverError(I2CError):
 
 class I2COperationFailedError(I2CError):
     pass
+
+
+class I2CMemoryAddressSizeError(I2CError):
+    def __init__(self, addrsize):
+        msg = "Bad I2C memory address size: {}".format(addrsize)
+        super().__init__(msg)

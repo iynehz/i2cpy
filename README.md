@@ -88,7 +88,7 @@ A device responds if it pulls the SDA line low after its address
 Write the bytes from buf to the peripheral specified by addr.
 
 * **Parameters:**
-  * **addr** (`int` | `Buffer`) – I2C peripheral deivce address
+  * **addr** (`int`) – I2C peripheral deivce address
   * **buf** (`Buffer`) – bytes to write
 
 #### I2C.readfrom(addr, nbytes, /)
@@ -96,7 +96,7 @@ Write the bytes from buf to the peripheral specified by addr.
 Read nbytes from the peripheral specified by addr.
 
 * **Parameters:**
-  * **addr** (`int` | `Buffer`) – I2C peripheral device address
+  * **addr** (`int`) – I2C peripheral device address
   * **nbytes** (`int`) – number of bytes to read
 * **Return type:**
   `bytes`
@@ -111,8 +111,8 @@ Write buf to the peripheral specified by addr starting from the
 memory address specified by memaddr.
 
 * **Parameters:**
-  * **addr** (`int` | `Buffer`) – I2C peripheral device address
-  * **memaddr** (`int` | `Buffer`) – memory address
+  * **addr** (`int`) – I2C peripheral device address
+  * **memaddr** (`int`) – memory address
   * **buf** (`Buffer`) – bytes to write
   * **addrsize** (`int`) – \_description_, defaults to 8
 
@@ -122,8 +122,8 @@ Read *nbytes* from the peripheral specified by *addr* starting from
 the memory address specified by *memaddr*.
 
 * **Parameters:**
-  * **addr** (`int` | `Buffer`) – I2C peripheral device address
-  * **memaddr** (`int` | `Buffer`) – memory address
+  * **addr** (`int`) – I2C peripheral device address
+  * **memaddr** (`int`) – memory address
   * **nbytes** (`int`) – number of bytes to read
   * **addrsize** (`int`) – \_description_, defaults to 8
 * **Return type:**
@@ -138,8 +138,8 @@ memory address specified by memaddr. The number of bytes read is the
 length of buf.
 
 * **Parameters:**
-  * **addr** (`int` | `Buffer`) – I2C peripheral device address
-  * **memaddr** (`int` | `Buffer`) – memory address
+  * **addr** (`int`) – I2C peripheral device address
+  * **memaddr** (`int`) – memory address
   * **buf** (`bytearray`) – buffer to store the bytes read
   * **addrsize** (`int`) – \_description_, defaults to 8
 

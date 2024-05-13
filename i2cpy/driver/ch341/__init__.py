@@ -13,7 +13,7 @@ except ImportError:
 from .dll import ch341dll
 from .constants import *
 
-from ..abc import I2CDriverBase, i2c_addr_byte, to_buffer
+from ..abc import I2CDriverBase, i2c_addr_byte, to_buffer, memaddr_to_bytes
 from ...errors import I2COperationFailedError
 
 
@@ -35,12 +35,7 @@ class BaudRate(Enum):
 
 
 class CH341(I2CDriverBase):
-    def __init__(
-        self,
-        id: Optional[int | str] = None,
-        *,
-        freq: int | float = 400000
-    ):
+    def __init__(self, id: Optional[int | str] = None, *, freq: int | float = 400000):
         """Initializes the CH341 I2C driver.
 
         :param id: CH341 device index number, defaults to 0 on Windows and
@@ -62,7 +57,7 @@ class CH341(I2CDriverBase):
         self.baudrate = BaudRate.from_number(freq)
 
     def init(self):
-        """Initialise the I2C bus."""
+        """Initialize the I2C bus."""
         if os.name == "nt":
             self._init_nt()
         else:
@@ -76,7 +71,7 @@ class CH341(I2CDriverBase):
             raise OSError("CH341OpenDevice(%s) failed!" % self._fd)
 
     def _init_posix(self):
-        buf = create_string_buffer(b'/dev/ch34x_pis0')
+        buf = create_string_buffer(b"/dev/ch34x_pis0")
         fd = ch341dll.CH341OpenDevice(buf)
         if fd > 0:
             self._fd = fd
@@ -97,9 +92,6 @@ class CH341(I2CDriverBase):
         self._check_ret(ret)
 
     def _writeread_into(self, buf: Buffer, rbuf: Optional[bytearray]):
-        """Write the bytes from `buf` to the bus, and read bytes from the bus
-        and stores into `rbuf`. The number of bytes read is the length of buf.
-        """
         try:
             ibuf = (c_byte * len(memoryview(buf))).from_buffer(buf)
         except TypeError:
@@ -117,41 +109,25 @@ class CH341(I2CDriverBase):
         self._check_ret(ret)
 
     def _write(self, buf: Buffer):
-        """Write the bytes from buf to the bus."""
         self._writeread_into(buf, None)
 
-    def readfrom_into(self, addr: int | Buffer, buf: bytearray):
-        """Read into buf from the peripheral specified by addr.
-        The number of bytes read will be the length of buf.
-
-        :param addr: I2C peripheral device address
-        :param buf: _description_
-        """
+    def readfrom_into(self, addr: int, buf: bytearray):
         wbuf = i2c_addr_byte(addr)
         self._writeread_into(wbuf, buf)
 
-    def writeto(self, addr: int | Buffer, buf: Buffer | List[int]):
-        """Write the bytes from buf to the peripheral specified by addr.
-
-        :param addr: I2C peripheral deivce address
-        :param buf: _description_
-        """
+    def writeto(self, addr: int, buf: Buffer | List[int]):
         wbuf = bytes(i2c_addr_byte(addr)) + to_buffer(buf)
         self._write(wbuf)
 
     def readfrom_mem_into(
         self,
-        addr: int | Buffer,
-        memaddr: int | Buffer,
+        addr: int,
+        memaddr: int,
         buf: bytearray,
         *,
         addrsize: int = 8,
     ):
-        """Read into buf from the peripheral specified by addr starting from the
-        memory address specified by memaddr. The number of bytes read is the
-        length of buf.
-        """
-        wbuf = bytes(i2c_addr_byte(addr)) + to_buffer(memaddr)
+        wbuf = bytes(i2c_addr_byte(addr)) + memaddr_to_bytes(memaddr, addrsize)
         self._writeread_into(wbuf, buf)
 
     def _start(self):

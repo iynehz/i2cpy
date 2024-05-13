@@ -40,7 +40,7 @@ try:
 except ImportError:
     from typing_extensions import Buffer
 
-from i2cpy.driver.abc import i2c_addr_byte, to_buffer
+from i2cpy.driver.abc import memaddr_to_bytes
 from i2cpy.errors import *
 
 
@@ -94,7 +94,7 @@ class I2C:
         """Close the I2C bus."""
         self.driver.deinit()
 
-    def readfrom(self, addr: int | Buffer, nbytes: int, /) -> bytes:
+    def readfrom(self, addr: int, nbytes: int, /) -> bytes:
         """Read nbytes from the peripheral specified by addr.
 
         :param addr: I2C peripheral device address
@@ -103,7 +103,7 @@ class I2C:
         """
         return self.driver.readfrom(addr, nbytes)
 
-    def readfrom_into(self, addr: int | Buffer, buf: bytearray, /):
+    def readfrom_into(self, addr: int, buf: bytearray, /):
         """Read into buf from the peripheral specified by addr.
         The number of bytes read will be the length of buf.
 
@@ -112,7 +112,7 @@ class I2C:
         """
         return self.driver.readfrom_into(addr, buf)
 
-    def writeto(self, addr: int | Buffer, buf: Buffer, /):
+    def writeto(self, addr: int, buf: Buffer, /):
         """Write the bytes from buf to the peripheral specified by addr.
 
         :param addr: I2C peripheral deivce address
@@ -122,8 +122,8 @@ class I2C:
 
     def readfrom_mem_into(
         self,
-        addr: int | Buffer,
-        memaddr: int | Buffer,
+        addr: int,
+        memaddr: int,
         buf: bytearray,
         *,
         addrsize: int = 8,
@@ -141,8 +141,8 @@ class I2C:
 
     def readfrom_mem(
         self,
-        addr: int | Buffer,
-        memaddr: int | Buffer,
+        addr: int,
+        memaddr: int,
         nbytes: int,
         *,
         addrsize: int = 8,
@@ -157,13 +157,13 @@ class I2C:
         :return: the bytes read
         """
         buf = bytearray(nbytes)
-        self.readfrom_mem_into(addr, memaddr, buf, addrsize=addrsize)
+        self.readfrom_mem_into(addr, memaddr, buf)
         return bytes(buf)
 
     def writeto_mem(
         self,
-        addr: int | Buffer,
-        memaddr: int | Buffer,
+        addr: int,
+        memaddr: int,
         buf: Buffer,
         *,
         addrsize: int = 8,
@@ -176,7 +176,7 @@ class I2C:
         :param buf: bytes to write
         :param addrsize: _description_, defaults to 8
         """
-        wbuf = bytes(to_buffer(memaddr)) + buf
+        wbuf = memaddr_to_bytes(memaddr, addrsize) + buf
         self.writeto(addr, wbuf)
 
     def scan(self, start: int = 0x08, stop: int = 0x77) -> List[int]:
