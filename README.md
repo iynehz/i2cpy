@@ -5,7 +5,8 @@
    <a href="https://pypi.org/project/i2cpy/"><img src="https://img.shields.io/pypi/v/i2cpy.svg" alt="pypi"/></a>
    <a href="https://github.com/iynehz/i2cpy/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="license"/></a>
    <img src="https://readthedocs.org/projects/i2cpy/badge/?version=latest" alt="docs">
-   <img src="https://github.com/iynehz/i2cpy/actions/workflows/lint.yml/badge.svg" alt="lint"/>
+   <img src="https://img.shields.io/badge/code%20style-black-black.svg" alt="Code style: black"/>
+   <img src="https://img.shields.io/badge/mypy-checked-green.svg" alt="mypy"/>
 </div>
 
 ## Introduction
@@ -41,7 +42,7 @@ i2c.writeto_mem(42, 2, b'\x10')  # write 1 byte to memory of peripheral 42,
 
 ### Constructor
 
-#### I2C.\_\_init_\_(\*, id=None, driver=None, freq=400000, auto_init=True, \*\*kwargs)
+#### I2C.\_\_init_\_(id=None, \*, driver=None, freq=400000, auto_init=True, \*\*kwargs)
 
 Constructor.
 

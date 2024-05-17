@@ -1,3 +1,6 @@
+from typing import Optional
+
+
 class I2CError(Exception):
     """Base exception for errors raised from i2cpy."""
 
@@ -10,7 +13,10 @@ class I2CInvalidDriverError(I2CError):
 
 
 class I2COperationFailedError(I2CError):
-    pass
+    def __init__(self, operation: str, additional_message: Optional[str] = None):
+        self.operation = operation
+        msg = "{} failed! {}".format(operation, additional_message or "")
+        super().__init__(msg)
 
 
 class I2CMemoryAddressSizeError(I2CError):
