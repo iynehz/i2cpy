@@ -53,8 +53,8 @@ log = logging.getLogger(__name__)
 class I2C:
     def __init__(
         self,
-        *,
         id: Optional[int | str] = None,
+        *,
         driver: Optional[str] = None,
         freq: int = 400000,
         auto_init: bool = True,
