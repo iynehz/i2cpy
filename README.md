@@ -4,9 +4,8 @@
    <img src="https://img.shields.io/badge/python-3.7+-blue.svg" alt="python"/>
    <a href="https://pypi.org/project/i2cpy/"><img src="https://img.shields.io/pypi/v/i2cpy.svg" alt="pypi"/></a>
    <a href="https://github.com/iynehz/i2cpy/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="license"/></a>
-   <img src="https://readthedocs.org/projects/i2cpy/badge/?version=latest" alt="docs">
-   <img src="https://img.shields.io/badge/code%20style-black-black.svg" alt="Code style: black"/>
-   <img src="https://img.shields.io/badge/mypy-checked-green.svg" alt="mypy"/>
+   <img src="https://readthedocs.org/projects/i2cpy/badge/?version=latest" alt="docs"/>
+   <img src="https://github.com/iynehz/i2cpy/actions/workflows/lint.yml/badge.svg" alt="lint"/>
 </div>
 
 ## Introduction
