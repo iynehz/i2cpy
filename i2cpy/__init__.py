@@ -5,8 +5,12 @@ respectively.
 I2C objects are created attached to a specific bus. They can be initialized
 when created, or initialized later on.
 
-This library is designed to support different I2C driver implementations.
-It's interface is similar to MicroPython's ``machine.I2C`` as well as CircuitPython's
+This library is designed to support different I2C driver implementations. At
+present below drivers are supported:
+
+* CH341 (CH341A, etc)
+
+The interface is similar to MicroPython's ``machine.I2C`` as well as CircuitPython's
 ``board.I2C`` classes.
 
 Example usage:
