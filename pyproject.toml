@@ -16,8 +16,14 @@ readme = "README.md"
 license = {file = "LICENSE"}
 keywords = ["i2c", "ch341", "ch341a"]
 classifiers = [
-  "Development Status :: 4 - Beta",
-  "Programming Language :: Python"
+  "Development Status :: 5 - Production/Stable",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Topic :: Software Development",
+  "Topic :: Scientific/Engineering",
+  "Typing :: Typed"
 ]
 dynamic = ["version"]
 
