@@ -23,39 +23,17 @@ Introduction
 
 .. automodule:: i2cpy
 
-Class I2C
-=========
+Installation
+============
 
+The i2cpy Python module itself can be simply pip installed,
 
-Constructor
------------
+.. code-block::
 
-.. automethod:: i2cpy.I2C.__init__
+   pip intall i2cpy
 
-General methods
----------------
-
-.. automethod:: i2cpy.I2C.init
-.. automethod:: i2cpy.I2C.deinit
-.. automethod:: i2cpy.I2C.scan
-
-
-Standard bus operations
------------------------
-
-.. automethod:: i2cpy.I2C.writeto
-.. automethod:: i2cpy.I2C.readfrom
-
-Memory operations
------------------
-
-.. automethod:: i2cpy.I2C.writeto_mem
-.. automethod:: i2cpy.I2C.readfrom_mem
-.. automethod:: i2cpy.I2C.readfrom_mem_into
-
-
-Supported I2C drivers
-=====================
+And for the underlying I2C implementations you still need to install their
+corresponding drivers. 
 
 ch341
 -----
@@ -100,9 +78,40 @@ Example usage:
 
    from i2cpy import I2C
 
+   i2c = I2C()                                     # ch341 is the default driver
    i2c = I2C(driver="ch341")                       # explicitly specify driver
 
    i2c = I2C(0, driver="ch341")                    # override usb id on Windows
 
    i2c = I2C("/dev/ch34x_pis0", driver="ch341")    # override usb device on Linux
    
+
+Class I2C
+=========
+
+
+Constructor
+-----------
+
+.. automethod:: i2cpy.I2C.__init__
+
+General methods
+---------------
+
+.. automethod:: i2cpy.I2C.init
+.. automethod:: i2cpy.I2C.deinit
+.. automethod:: i2cpy.I2C.scan
+
+
+Standard bus operations
+-----------------------
+
+.. automethod:: i2cpy.I2C.writeto
+.. automethod:: i2cpy.I2C.readfrom
+
+Memory operations
+-----------------
+
+.. automethod:: i2cpy.I2C.writeto_mem
+.. automethod:: i2cpy.I2C.readfrom_mem
+.. automethod:: i2cpy.I2C.readfrom_mem_into

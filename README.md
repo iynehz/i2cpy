@@ -22,8 +22,7 @@ present below drivers are supported:
 
 * CH341 (CH341A, etc)
 
-The interface is similar to MicroPython’s `machine.I2C` as well as CircuitPython’s
-`board.I2C` classes.
+The interface is similar to that of MicroPython’s [machine.I2C](https://docs.micropython.org/en/latest/library/machine.I2C.html)
 
 Example usage:
 
@@ -41,6 +40,80 @@ i2c.writeto_mem(42, 2, b'\x10')  # write 1 byte to memory of peripheral 42,
                                  #   starting at memory address 2 in the peripheral
 ```
 
+If you prefer an “int” interface to the “bytes” interface, you can easily write
+wrapper functions youself. For example,
+
+```python
+# assume you already have a gloal i2c object
+
+def i2c_write(addr: int, memaddr: int, *args):
+    i2c.writeto_mem(addr, memaddr, bytes(args))
+
+def i2c_read(addr: int, memaddr: int, nbytes: int) -> list[int]:
+    got = i2c.readfrom_mem(addr, memaddr, nbytes)
+    return list(got)
+```
+
+## Installation
+
+The i2cpy Python module itself can be simply pip installed,
+
+```default
+pip intall i2cpy
+```
+
+And for the underlying I2C implementations you still need to install their
+corresponding drivers.
+
+### ch341
+
+The CH341 series chip (like CH341A) is USB bus converter which converts USB to UART, parallel
+port, and common synchronous serial communication interfaces (I2C, SPI).
+The chip is manufactured by the company [Qinheng Microelectronics](https://wch-ic.com/).
+
+The ch341 driver shipped with this library is a Python interface to CH341’s
+official DLLs.
+
+You need the driver DLL files, which are downloadable from Qinheng’s website.
+
+Windows: [https://www.wch-ic.com/downloads/CH341PAR_ZIP.html](https://www.wch-ic.com/downloads/CH341PAR_ZIP.html)
+
+On Windows it’s recommended to place them
+under Windows System32 folder. Or if you place them under a different directory,
+you can add that directory to PATH environment variable.
+
+Linux: [https://www.wch-ic.com/downloads/CH341PAR_LINUX_ZIP.html](https://www.wch-ic.com/downloads/CH341PAR_LINUX_ZIP.html)
+
+On Linux you need to build the kernel module from source under the downloaded
+zipball’s driver sub-directory like,
+
+```bash
+$ cd driver
+$ sudo make && sudo make install
+```
+
+Also you need to either place the libch347.so file for your platform to system
+supported path like /usr/local/lib, or you make the so file loadable by adding
+its directory to LD_LIBRARY_PATH environment variable.
+
+MacOS: [https://www.wch-ic.com/download/CH341SER_MAC_ZIP.html](https://www.wch-ic.com/download/CH341SER_MAC_ZIP.html)
+
+I don’t use this library on Mac myself. But let me know if it does not work, and
+I can give it a try on Mac.
+
+Example usage:
+
+```python
+from i2cpy import I2C
+
+i2c = I2C()                                     # ch341 is the default driver
+i2c = I2C(driver="ch341")                       # explicitly specify driver
+
+i2c = I2C(0, driver="ch341")                    # override usb id on Windows
+
+i2c = I2C("/dev/ch34x_pis0", driver="ch341")    # override usb device on Linux
+```
+
 ## Class I2C
 
 ### Constructor
@@ -50,7 +123,7 @@ i2c.writeto_mem(42, 2, b'\x10')  # write 1 byte to memory of peripheral 42,
 Constructor.
 
 * **Parameters:**
-  * **id** (`Union`[`int`, `str`, `None`]) – Identifies a particular I2C peripheral. Allowed values depend
+  * **id** (`Union`[`str`, `int`, `None`]) – Identifies a particular I2C peripheral. Allowed values depend
     on the particular driver implementation.
   * **freq** (`int`) – I2C bus baudrate, defaults to 400000
   * **driver** (`Optional`[`str`]) – I2C driver name. It corresponds to the I2C driver sub
@@ -146,53 +219,3 @@ length of buf.
   * **memaddr** (`int`) – memory address
   * **buf** (`bytearray`) – buffer to store the bytes read
   * **addrsize** (`int`) – \_description_, defaults to 8
-
-## Supported I2C drivers
-
-### ch341
-
-The CH341 series chip (like CH341A) is USB bus converter which converts USB to UART, parallel
-port, and common synchronous serial communication interfaces (I2C, SPI).
-The chip is manufactured by the company [Qinheng Microelectronics](https://wch-ic.com/).
-
-The ch341 driver shipped with this library is a Python interface to CH341’s
-official DLLs.
-
-You need the driver DLL files, which are downloadable from Qinheng’s website.
-
-Windows: [https://www.wch-ic.com/downloads/CH341PAR_ZIP.html](https://www.wch-ic.com/downloads/CH341PAR_ZIP.html)
-
-On Windows it’s recommended to place them
-under Windows System32 folder. Or if you place them under a different directory,
-you can add that directory to PATH environment variable.
-
-Linux: [https://www.wch-ic.com/downloads/CH341PAR_LINUX_ZIP.html](https://www.wch-ic.com/downloads/CH341PAR_LINUX_ZIP.html)
-
-On Linux you need to build the kernel module from source under the downloaded
-zipball’s driver sub-directory like,
-
-```bash
-$ cd driver
-$ sudo make && sudo make install
-```
-
-Also you need to either place the libch347.so file for your platform to system
-supported path like /usr/local/lib, or you make the so file loadable by adding
-its directory to LD_LIBRARY_PATH environment variable.
-
-MacOS: [https://www.wch-ic.com/download/CH341SER_MAC_ZIP.html](https://www.wch-ic.com/download/CH341SER_MAC_ZIP.html)
-
-I don’t use this library on Mac myself. But let me know if it does not work, and
-I can give it a try on Mac.
-
-Example usage:
-
-```python
-from i2cpy import I2C
-
-i2c = I2C(driver="ch341")                       # explicitly specify driver
-
-i2c = I2C(0, driver="ch341")                    # override usb id on Windows
-
-i2c = I2C("/dev/ch34x_pis0", driver="ch341")    # override usb device on Linux
-```

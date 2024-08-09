@@ -10,8 +10,7 @@ present below drivers are supported:
 
 * CH341 (CH341A, etc)
 
-The interface is similar to MicroPython's ``machine.I2C`` as well as CircuitPython's
-``board.I2C`` classes.
+The interface is similar to that of MicroPython's `machine.I2C <https://docs.micropython.org/en/latest/library/machine.I2C.html>`_
 
 Example usage:
 
@@ -29,6 +28,19 @@ Example usage:
     i2c.writeto_mem(42, 2, b'\\x10')  # write 1 byte to memory of peripheral 42,
                                      #   starting at memory address 2 in the peripheral
 
+If you prefer an "int" interface to the "bytes" interface, you can easily write
+wrapper functions youself. For example,
+
+.. code-block:: python
+
+    # assume you already have a gloal i2c object
+
+    def i2c_write(addr: int, memaddr: int, *args):
+        i2c.writeto_mem(addr, memaddr, bytes(args))
+
+    def i2c_read(addr: int, memaddr: int, nbytes: int) -> list[int]:
+        got = i2c.readfrom_mem(addr, memaddr, nbytes)
+        return list(got)
 
 """
 
