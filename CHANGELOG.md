@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.3] - 2024-09-30
+
+### Fixed
+
+- Fix Python version badge in README.
+
 ## [0.1.2] - 2024-09-30
 
 ### Added
