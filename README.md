@@ -76,10 +76,12 @@ official DLLs.
 
 You need the driver DLL files, which are downloadable from Qinheng’s website.
 
-Windows: [https://www.wch-ic.com/downloads/CH341PAR_ZIP.html](https://www.wch-ic.com/downloads/CH341PAR_ZIP.html)
+Windows: [https://www.wch-ic.com/downloads/CH341PAR_EXE.html](https://www.wch-ic.com/downloads/CH341PAR_EXE.html)
 
-On Windows it’s recommended to place them
-under Windows System32 folder. Or if you place them under a different directory,
+They also have a zipball [https://www.wch-ic.com/downloads/CH341PAR_ZIP.html](https://www.wch-ic.com/downloads/CH341PAR_ZIP.html) .
+If you use the zipball on Windows it’s recommended to place the DLL files,
+CH341DLLA64.DLL and/or CH341DLL.DLL depending on the bitness, under Windows
+System32/SysWOW64 folder. Or if you place them under a different directory,
 you can add that directory to PATH environment variable.
 
 Linux: [https://www.wch-ic.com/downloads/CH341PAR_LINUX_ZIP.html](https://www.wch-ic.com/downloads/CH341PAR_LINUX_ZIP.html)
