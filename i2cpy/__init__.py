@@ -173,7 +173,7 @@ class I2C:
         :return: the bytes read
         """
         buf = bytearray(nbytes)
-        self.readfrom_mem_into(addr, memaddr, buf)
+        self.readfrom_mem_into(addr, memaddr, buf, addrsize=addrsize)
         return bytes(buf)
 
     def writeto_mem(
