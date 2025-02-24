@@ -79,7 +79,11 @@ class CH341(I2CDriverBase):
             raise I2COperationFailedError("CH341OpenDevice")
 
     def _init_posix(self):
-        buf = create_string_buffer(b"/dev/ch34x_pis0")
+        #buf = create_string_buffer(b"/dev/ch34x_pis0")
+        if type(self.device_path) == str:
+        	buf = create_string_buffer(bytes(self.device_path, 'utf8'))
+        else:
+        	buf = create_string_buffer(bytes('/dev/ch34x_pis' + str(self.device_path), 'utf8'))
         fd = ch341dll.CH341OpenDevice(buf)
         if fd > 0:
             self._fd = fd
