@@ -46,22 +46,25 @@ class CH341(I2CDriverBase):
     def __init__(self, id: Optional[int | str] = None, *, freq: int | float = 400000):
         """Initializes the CH341 I2C driver.
 
-        :param id: CH341 device index number, defaults to 0 on Windows and
-            /etc/ch34x_pis0 on posix systems.
+        :param id: CH341 device index number.
+            On Windows it's an integer and default is 0.
+            On posix systems it can be either a string like "/dev/ch34x_pis0"
+            or an integer like 0 that would be internally mapped to the string
+            form "/dev/ch34x_pis0", default is "/dev/ch34x_pis0".
         :param freq: I2C bus baudrate, defaults to 400000
         :param dll: CH341 DLL name
         """
         if id is None:
-            if sys.platform == "win32":
-                id = 0
-            else:
-                id = "/dev/ch34x_pis0"
+            id = 0
 
         if sys.platform == "win32":
             self._fd = id
         else:
-            self.device_path = id
-            self._fd = -1
+            if isinstance(id, int):
+                self.device_path = f"/dev/ch34x_pis{id}"
+            else:
+                self.device_path = str(id)
+            self._fd = None
         self.baudrate = BaudRate.from_number(freq)
 
     def init(self):
@@ -79,11 +82,7 @@ class CH341(I2CDriverBase):
             raise I2COperationFailedError("CH341OpenDevice")
 
     def _init_posix(self):
-        #buf = create_string_buffer(b"/dev/ch34x_pis0")
-        if type(self.device_path) == str:
-        	buf = create_string_buffer(bytes(self.device_path, 'utf8'))
-        else:
-        	buf = create_string_buffer(bytes('/dev/ch34x_pis' + str(self.device_path), 'utf8'))
+        buf = create_string_buffer(bytes(self.device_path, "utf-8"))
         fd = ch341dll.CH341OpenDevice(buf)
         if fd > 0:
             self._fd = fd

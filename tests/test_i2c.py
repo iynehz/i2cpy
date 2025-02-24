@@ -14,6 +14,10 @@ def test_driver():
     with pytest.raises(I2CInvalidDriverError):
         i2c = I2C(driver="somethingbad")
 
+    if os.name == "posix":
+        i2c_by_device_id = I2C(0)
+        i2c_by_device_file = I2C("/dev/ch34x_pis0")
+
 
 def test_scan():
     i2c = I2C()
