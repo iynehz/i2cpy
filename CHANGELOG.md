@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.5] - 2025-02-25
+
+### Fixed
+
+- Fix multi-device support on Linux. ([GH 2](https://github.com/iynehz/i2cpy/issues/2))
+
 ## [0.1.4] - 2025-02-15
 
 ### Fixed
@@ -36,7 +42,8 @@
 - First stable release.
 
 
-[unreleased]: https://github.com/iynehz/i2cpy/compare/v0.1.4...HEAD
+[unreleased]: https://github.com/iynehz/i2cpy/compare/v0.1.5...HEAD
+[0.1.5]: https://github.com/iynehz/i2cpy/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/iynehz/i2cpy/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/iynehz/i2cpy/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/iynehz/i2cpy/compare/v0.1.1...v0.1.2

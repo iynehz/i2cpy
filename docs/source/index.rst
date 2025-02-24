@@ -58,16 +58,19 @@ you can add that directory to PATH environment variable.
 Linux: `<https://www.wch-ic.com/downloads/CH341PAR_LINUX_ZIP.html>`_
 
 On Linux you need to build the kernel module from source under the downloaded
-zipball's `driver` sub-directory like,
+zipball's `driver` sub-directory like below.
 
 .. code-block:: bash
 
    $ cd driver
-   $ sudo make && sudo make install
+   $ make && sudo make install
 
 Also you need to either place the `libch347.so` file for your platform to system
 supported path like `/usr/local/lib`, or you make the so file loadable by adding
-its directory to `LD_LIBRARY_PATH` environment variable.
+its directory to `LD_LIBRARY_PATH` environment variable. Also, on Linux there
+could be more details like, system package `linux-headers-$(uname -r)` being a
+prerequisite of making the kernel module, or permissioning of `/dev/ch34x_pis*`,
+etc.. But those are beyond scope of this doc.
 
 MacOS: `<https://www.wch-ic.com/download/CH341SER_MAC_ZIP.html>`_
 
@@ -83,9 +86,9 @@ Example usage:
    i2c = I2C()                                     # ch341 is the default driver
    i2c = I2C(driver="ch341")                       # explicitly specify driver
 
-   i2c = I2C(0, driver="ch341")                    # override usb id on Windows
+   i2c = I2C(0)                                    # override usb id
 
-   i2c = I2C("/dev/ch34x_pis0", driver="ch341")    # override usb device on Linux
+   i2c = I2C("/dev/ch34x_pis0")                    # override usb device on Linux
    
 
 Class I2C
