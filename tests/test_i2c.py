@@ -3,6 +3,7 @@
 import pytest
 
 import os
+from typing import List
 from i2cpy import I2C
 from i2cpy.errors import *
 
@@ -44,12 +45,10 @@ def test_i2c_user_wrapper_funcs():
     i2c = I2C(freq=100e3)
 
     def i2c_write(addr: int, memaddr: int, *args):
-        print(bytes(args))
         i2c.writeto_mem(addr, memaddr, bytes(args))
 
-    def i2c_read(addr: int, memaddr: int, nbytes: int) -> list[int]:
+    def i2c_read(addr: int, memaddr: int, nbytes: int) -> List[int]:
         got = i2c.readfrom_mem(addr, memaddr, nbytes)
-        print(got)
         return list(got)
 
     memaddr = 0x20

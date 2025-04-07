@@ -26,7 +26,7 @@ def i2c_addr_byte(addr: int | Buffer, is_read: bool = False) -> bytes:
     if is_read:
         addr |= 1
 
-    return addr.to_bytes(1)
+    return addr.to_bytes(1, "big")
 
 
 def to_buffer(x: Buffer | List[int] | int) -> Buffer:
