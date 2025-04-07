@@ -1,6 +1,7 @@
 typing-extensions
 
 pytest
+tox
 mypy
 
 -r docs/requirements.txt
