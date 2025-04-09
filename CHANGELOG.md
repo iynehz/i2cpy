@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.6] - 2025-04-09
+
+### Fixed
+
+- Fix py38 compatibility.
+- Doc: Explicitly say macOS is not supported.
+
+
 ## [0.1.5] - 2025-02-25
 
 ### Fixed
