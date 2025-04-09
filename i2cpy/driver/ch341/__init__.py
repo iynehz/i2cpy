@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import sys
-from ctypes import c_byte, c_int32, c_ulong, c_uint8, create_string_buffer
+from ctypes import c_byte, c_ulong, c_uint8, create_string_buffer
 from enum import Enum
 from typing import List, Optional, Type
 
