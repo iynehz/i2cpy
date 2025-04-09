@@ -101,7 +101,7 @@ could be more details like, system package linux-headers-$(uname -r) being a
 prerequisite of making the kernel module, or permissioning of /dev/ch34x_pis\*,
 etc.. Those are beyond scope of this doc though.
 
-**macOS** is not supported. See also this ticket <https://github.com/iynehz/i2cpy/issues/3>.
+**macOS** is not supported. See also [this ticket](https://github.com/iynehz/i2cpy/issues/3).
 
 Example usage:
 
