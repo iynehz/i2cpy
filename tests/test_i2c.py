@@ -13,16 +13,30 @@ addr = 0x17
 
 def test_driver():
     with pytest.raises(I2CInvalidDriverError):
-        i2c = I2C(driver="somethingbad")
+        I2C(driver="somethingbad")
 
     if os.name == "posix":
-        i2c_by_device_id = I2C(0)
-        i2c_by_device_file = I2C("/dev/ch34x_pis0")
+        I2C(0)
+        I2C("/dev/ch34x_pis0")
+
+
+def test_invalid_device():
+    with pytest.raises(I2COperationFailedError):
+        I2C(999)
+
+    with pytest.raises(I2COperationFailedError):
+        if os.name == "posix":
+            I2C("/dev/null")
 
 
 def test_scan():
     i2c = I2C()
     assert i2c.scan() == [addr]
+
+    # now close device and it should error on rest operations
+    i2c.deinit()
+    with pytest.raises(I2COperationFailedError):
+        i2c.scan()
 
 
 @pytest.mark.parametrize(

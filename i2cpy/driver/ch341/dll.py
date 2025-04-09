@@ -21,6 +21,9 @@ def load() -> CDLL:
     else:
         dll = cdll.LoadLibrary(dll_name)
 
+        dll.CH34xOpenDevice.argtypes = (c_char_p,)
+        dll.CH34xSetStream.argtypes = (c_int32, c_uint8)
+
         funcs = [
             "CH341OpenDevice",
             "CH341CloseDevice",
@@ -35,11 +38,6 @@ def load() -> CDLL:
                 fname2 = re.sub(r"^CH341", "CH34x", fname)
                 f = getattr(dll, fname2)
                 setattr(dll, fname, f)
-
-        dll.CH34xOpenDevice.argtypes = (c_char_p,)
-        dll.CH341OpenDevice.argtypes = (c_char_p,)
-        dll.CH34xSetStream.argtypes = (c_int32, c_uint8)
-        dll.CH341SetStream.argtypes = (c_int32, c_uint8)
 
         return dll
 

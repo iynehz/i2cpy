@@ -91,11 +91,12 @@ class CH341(I2CDriverBase):
             chip_ver = (c_uint8 * 1)()
             ret = ch341dll.CH34x_GetChipVersion(self._fd, chip_ver)
 
-            ch341dll.CH34xSetStream.argtypes = (c_int32, c_uint8)
             ret = ch341dll.CH34xSetStream(self._fd, self.baudrate.value)
             self._check_ret(ret, "CH34xSetStream")
         else:
-            raise OSError("CH341OpenDevice(%s) failed!" % self.device_path)
+            raise I2COperationFailedError(
+                "CH341OpenDevice(%s) failed!" % self.device_path
+            )
 
     def deinit(self):
         """Close the I2C bus."""
