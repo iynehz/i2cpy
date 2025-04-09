@@ -76,7 +76,7 @@ official DLLs.
 
 You need the driver DLL files, which are downloadable from Qinheng’s website.
 
-Windows: [https://www.wch-ic.com/downloads/CH341PAR_EXE.html](https://www.wch-ic.com/downloads/CH341PAR_EXE.html)
+**Windows**: [https://www.wch-ic.com/downloads/CH341PAR_EXE.html](https://www.wch-ic.com/downloads/CH341PAR_EXE.html)
 
 They also have a zipball [https://www.wch-ic.com/downloads/CH341PAR_ZIP.html](https://www.wch-ic.com/downloads/CH341PAR_ZIP.html) .
 If you use the zipball on Windows it’s recommended to place the DLL files,
@@ -84,7 +84,7 @@ CH341DLLA64.DLL and/or CH341DLL.DLL depending on the bitness, under Windows
 System32/SysWOW64 folder. Or if you place them under a different directory,
 you can add that directory to PATH environment variable.
 
-Linux: [https://www.wch-ic.com/downloads/CH341PAR_LINUX_ZIP.html](https://www.wch-ic.com/downloads/CH341PAR_LINUX_ZIP.html)
+**Linux**: [https://www.wch-ic.com/downloads/CH341PAR_LINUX_ZIP.html](https://www.wch-ic.com/downloads/CH341PAR_LINUX_ZIP.html)
 
 On Linux you need to build the kernel module from source under the downloaded
 zipball’s driver sub-directory like below.
@@ -99,12 +99,9 @@ supported path like /usr/local/lib, or you make the so file loadable by adding
 its directory to LD_LIBRARY_PATH environment variable. Also, on Linux there
 could be more details like, system package linux-headers-$(uname -r) being a
 prerequisite of making the kernel module, or permissioning of /dev/ch34x_pis\*,
-etc.. But those are beyond scope of this doc.
+etc.. Those are beyond scope of this doc though.
 
-MacOS: [https://www.wch-ic.com/download/CH341SER_MAC_ZIP.html](https://www.wch-ic.com/download/CH341SER_MAC_ZIP.html)
-
-I don’t use this library on Mac myself. But let me know if it does not work, and
-I can give it a try on Mac.
+**macOS** is not supported. See also this ticket <https://github.com/iynehz/i2cpy/issues/3>.
 
 Example usage:
 
