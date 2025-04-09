@@ -24,8 +24,8 @@ def test_invalid_device():
     with pytest.raises(I2COperationFailedError):
         I2C(999)
 
-    with pytest.raises(I2COperationFailedError):
-        if os.name == "posix":
+    if os.name == "posix":
+        with pytest.raises(I2COperationFailedError):
             I2C("/dev/null")
 
 
