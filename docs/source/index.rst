@@ -47,45 +47,53 @@ official DLLs.
 
 You need the driver DLL files, which are downloadable from Qinheng's website.
 
-**Windows**: `<https://www.wch-ic.com/downloads/CH341PAR_EXE.html>`_
+* **Windows**: `<https://www.wch-ic.com/downloads/CH341PAR_EXE.html>`_
 
-They also have a zipball `<https://www.wch-ic.com/downloads/CH341PAR_ZIP.html>`_ .
-If you use the zipball on Windows it’s recommended to place the DLL files,
-CH341DLLA64.DLL and/or CH341DLL.DLL depending on the bitness, under Windows
-System32/SysWOW64 folder. Or if you place them under a different directory,
-you can add that directory to PATH environment variable.
+  They also have a zipball `<https://www.wch-ic.com/downloads/CH341PAR_ZIP.html>`_ .
+  If you use the zipball on Windows it's recommended to place the DLL files,
+  CH341DLLA64.DLL and/or CH341DLL.DLL depending on the bitness, under Windows
+  System32/SysWOW64 folder. Or if you place them under a different directory,
+  you can add that directory to PATH environment variable.
 
-**Linux**: `<https://www.wch-ic.com/downloads/CH341PAR_LINUX_ZIP.html>`_
+* **Linux**: `<https://www.wch-ic.com/downloads/CH341PAR_LINUX_ZIP.html>`_
 
-On Linux you need to build the kernel module from source under the downloaded
-zipball's `driver` sub-directory like below.
+  On Linux you need to build the kernel module from source under the downloaded
+  zipball's `driver` sub-directory like below.
 
-.. code-block:: bash
+  .. code-block:: bash
 
    $ cd driver
+   $ sudo rmmod ch34x_pis
    $ make && sudo make install
 
-Also you need to either place the `libch347.so` file for your platform to system
-supported path like `/usr/local/lib`, or you make the so file loadable by adding
-its directory to `LD_LIBRARY_PATH` environment variable. Also, on Linux there
-could be more details like, system package `linux-headers-$(uname -r)` being a
-prerequisite of making the kernel module, or permissioning of `/dev/ch34x_pis*`,
-etc.. Those are beyond scope of this doc though.
+  Also you need to either place the `libch347.so` file for your platform to system
+  supported path like `/usr/local/lib`, or you make the so file loadable by adding
+  its directory to `LD_LIBRARY_PATH` environment variable.
 
-**macOS** is not supported. See also `this ticket <https://github.com/iynehz/i2cpy/issues/3>`_.
+  And because Qinheng sometimes updates their Linux driver and breaks backward
+  compatibility, be careful when you upgrade their Linux CH341PAR driver version,
+  and make sure your effective `libch347.so` file and your compiled kernel module
+  come from the same driver version.
+
+  Still on Linux there could be more details like, system package
+  `linux-headers-$(uname -r)` being a prerequisite of making the kernel module,
+  and permissioning of `/dev/ch34x_pis*`, etc..
+  Those are beyond scope of this doc though.
+
+* **macOS** is not supported. See also `this ticket <https://github.com/iynehz/i2cpy/issues/3>`_.
 
 Example usage:
 
 .. code-block:: python
 
-   from i2cpy import I2C
+  from i2cpy import I2C
 
-   i2c = I2C()                                     # ch341 is the default driver
-   i2c = I2C(driver="ch341")                       # explicitly specify driver
+  i2c = I2C()                                     # ch341 is the default driver
+  i2c = I2C(driver="ch341")                       # explicitly specify driver
 
-   i2c = I2C(0)                                    # override usb id
+  i2c = I2C(0)                                    # override usb id
 
-   i2c = I2C("/dev/ch34x_pis0")                    # override usb device on Linux
+  i2c = I2C("/dev/ch34x_pis0")                    # override usb device on Linux
    
 
 Class I2C

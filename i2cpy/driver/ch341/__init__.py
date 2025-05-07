@@ -87,9 +87,13 @@ class CH341(I2CDriverBase):
         if fd > 0:
             self._fd = fd
 
-            # Must call this api. Without it later api calls like CH34xSetStream() won't work.
-            chip_ver = (c_uint8 * 1)()
-            ret = ch341dll.CH34x_GetChipVersion(self._fd, chip_ver)
+            # It's not needed for CH34x Linux driver versions like 1.6.
+            # But for older versions of CH34x Linux driver like 1.4, below
+            # has to be called to get CH34xSetStream() work.
+            get_chip_version = getattr(ch341dll, "CH34x_GetChipVersion")
+            if get_chip_version:
+                chip_ver = (c_uint8 * 1)()
+                ret = ch341dll.CH34x_GetChipVersion(self._fd, chip_ver)
 
             ret = ch341dll.CH34xSetStream(self._fd, self.baudrate.value)
             self._check_ret(ret, "CH34xSetStream")

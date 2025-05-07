@@ -36,8 +36,9 @@ def load() -> CDLL:
         for fname in funcs:
             if not getattr(dll, fname, None):
                 fname2 = re.sub(r"^CH341", "CH34x", fname)
-                f = getattr(dll, fname2)
-                setattr(dll, fname, f)
+                f = getattr(dll, fname2, None)
+                if f is not None:
+                    setattr(dll, fname, f)
 
         return dll
 
