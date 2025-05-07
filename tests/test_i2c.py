@@ -31,6 +31,10 @@ def test_invalid_device():
 
 def test_scan():
     i2c = I2C()
+
+    if not hasattr(i2c.driver, "CH341WriteRead"):
+        pytest.skip("Skipping as CH341WriteRead not found")
+
     assert i2c.scan() == [addr]
 
     # now close device and it should error on rest operations
@@ -46,6 +50,7 @@ def test_scan():
         (0x10, b"\xaa\x55\xaa\x55", b"\xaa\x55\xaa\x55"),
         (0x10, bytearray(b"\x55\xaa\x55\xaa"), b"\x55\xaa\x55\xaa"),
         (0x10, bytearray(b"\xaa\x55\xaa\x55"), b"\xaa\x55\xaa\x55"),
+        (0x10, b"\x00\x00\x00\x00", b"\x00\x00\x00\x00"),
     ],
 )
 def test_i2c_mem(memaddr, buf, expected):
