@@ -12,15 +12,6 @@ except ImportError:
     from typing_extensions import Buffer
 
 from .dll import ch347dll
-from .constants import (
-    mCH347_PACKET_LENGTH,
-    mCH347A_CMD_I2C_STREAM,
-    mCH347A_CMD_I2C_STM_STA,
-    mCH347A_CMD_I2C_STM_STO,
-    mCH347A_CMD_I2C_STM_OUT,
-    mCH347A_CMD_I2C_STM_MAX,
-    mCH347A_CMD_I2C_STM_END,
-)
 
 from ..abc import I2CDriverBase, i2c_addr_byte, to_buffer, memaddr_to_bytes
 from ...errors import I2COperationFailedError
@@ -95,7 +86,7 @@ class CH347(I2CDriverBase):
             get_chip_version = getattr(ch347dll, "CH34x_GetChipVersion")
             if get_chip_version:
                 chip_ver = (c_uint8 * 1)()
-                ret = ch347dll.CH34x_GetChipVersion(self._fd, chip_ver)
+                ch347dll.CH34x_GetChipVersion(self._fd, chip_ver)
 
         #            ret = ch347dll.CH34xSetStream(self._fd, self.baudrate.value)
         #            self._check_ret(ret, "CH34xSetStream")
