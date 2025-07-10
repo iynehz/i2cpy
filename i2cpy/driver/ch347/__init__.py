@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import sys
-from ctypes import c_byte, c_ulong, c_uint8, create_string_buffer
+from ctypes import c_byte, c_ulong, c_uint8, create_string_buffer, byref
 from enum import Enum
 from typing import List, Optional, Type
+
+
 
 try:
     from collections.abc import Buffer
@@ -171,19 +173,20 @@ class CH347(I2CDriverBase):
         self._check_ret(ret, "CH347WriteData")
 
     def _out_byte_check_ack(self, obyte: int) -> bool:
-        buf = (c_byte * 4)(
-            mCH347A_CMD_I2C_STREAM,
-            mCH347A_CMD_I2C_STM_OUT,
-            obyte,
-            mCH347A_CMD_I2C_STM_END,
+        buf = [obyte]
+        write_buffer = create_string_buffer(bytes(buf))
+        write_length = len(write_buffer)
+
+        ack_count = c_ulong(0)
+        #ret = ch347dll.CH347WriteRead(
+        #    self._fd, len(buf), buf, mCH347A_CMD_I2C_STM_MAX, 1, ilen, ibuf
+        #)
+        ret = ch347dll.CH347StreamI2C_RetACK(
+            self._fd, 1, write_buffer, None, None, byref(ack_count)
         )
-        ibuf = (c_byte * mCH347_PACKET_LENGTH)()
-        ilen = (c_ulong * 1)(0)
-        ret = ch347dll.CH347WriteRead(
-            self._fd, len(buf), buf, mCH347A_CMD_I2C_STM_MAX, 1, ilen, ibuf
-        )
-        self._check_ret(ret, "CH347WriteRead")
-        return ilen[0] > 0 and ibuf[ilen[0] - 1] & 0x80 == 0
+        self._check_ret(ret, "CH347StreamI2C_RetACK")
+        return ack_count.value
+        #return ilen[0] > 0 and ibuf[ilen[0] - 1] & 0x80 == 0
 
     def check_device(self, addr: int | Buffer) -> bool:
         self._start()

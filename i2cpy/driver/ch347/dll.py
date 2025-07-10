@@ -29,9 +29,9 @@ def load() -> CDLL:
             "CH347CloseDevice",
             #"CH347SetStream",
             "CH347StreamI2C",
-            "CH347WiteData",
-            "CH347WriteRead",
-            #"CH347StreamI2CRetAck",
+            #"CH347WiteData",
+            #"CH347WriteRead",
+            "CH347StreamI2CRetAck",
         ]
 
         for fname in funcs:
