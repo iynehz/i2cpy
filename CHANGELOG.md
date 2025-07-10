@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.2.0] - 2025-07-13
+
+### Added
+
+- ch347 driver support.
+
+### Fixed
+
+- Linux: ch341 with QingHeng's official driver version 1.5, although scan() is
+  still broken.
+
+
 ## [0.1.6] - 2025-04-09
 
 ### Fixed
@@ -50,7 +62,7 @@
 - First stable release.
 
 
-[unreleased]: https://github.com/iynehz/i2cpy/compare/v0.1.5...HEAD
+[0.2.0]: https://github.com/iynehz/i2cpy/compare/v0.1.6...HEAD
 [0.1.6]: https://github.com/iynehz/i2cpy/compare/v0.1.5...v0.1.6
 [0.1.5]: https://github.com/iynehz/i2cpy/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/iynehz/i2cpy/compare/v0.1.3...v0.1.4

@@ -21,6 +21,7 @@ release = "0.1.0"
 
 extensions = [
     "sphinx.ext.autodoc",
+    "sphinx.ext.autosectionlabel",
     "sphinx.ext.coverage",
     "sphinx_autodoc_typehints",
     "sphinx_markdown_builder",

@@ -16,11 +16,16 @@ from .dll import ch347dll
 from ..abc import I2CDriverBase, i2c_addr_byte, to_buffer, memaddr_to_bytes
 from ...errors import I2COperationFailedError
 
+
 class BaudRate(Enum):
     BAUD20K = 0
     BAUD100K = 1
     BAUD400K = 2
     BAUD750K = 3
+
+    # While CH347's Application Development Manual V1.4 claims to support below
+    # baudrates, as I tried it on Windows they don't really work and they fall
+    # back to above baudrates.
     BAUD50K = 4
     BAUD200K = 5
     BAUD1M = 6
@@ -33,15 +38,14 @@ class BaudRate(Enum):
             return BaudRate.BAUD750K
         if freq >= 400e3:
             return BaudRate.BAUD400K
-        if freq >= 100e3:
-            return BaudRate.BAUD200K
         if freq >= 200e3:
-            return BaudRate.BAUD100K
+            return BaudRate.BAUD200K
         if freq >= 100e3:
-            return BaudRate.BAUD50K
-        if freq >= 50e3:
             return BaudRate.BAUD100K
+        if freq >= 50e3:
+            return BaudRate.BAUD50K
         return BaudRate.BAUD20K
+
 
 class CH347(I2CDriverBase):
     def __init__(self, id: Optional[int | str] = None, *, freq: int | float = 400000):
@@ -75,14 +79,12 @@ class CH347(I2CDriverBase):
         else:
             self._init_posix()
 
+        # set baudrate
+        ret = ch347dll.CH347I2C_Set(self._fd, self.baudrate.value)
+        self._check_ret(ret, "CH347I2C_Set")
+
     def _init_nt(self):
-        if ch347dll.CH347OpenDevice(self._fd) != -1:
-            ret = ch347dll.CH347I2C_Set(self._fd, self.baudrate.value)
-            self._check_ret(ret, "CH347I2C_Set")
-            # ret = ch347dll.CH347SetStream(self._fd, self.baudrate.value)
-            # self._check_ret(ret, "CH341SetStream")
-            pass
-        else:
+        if ch347dll.CH347OpenDevice(self._fd) < 0:
             raise I2COperationFailedError("CH347OpenDevice")
 
     def _init_posix(self):
@@ -98,9 +100,6 @@ class CH347(I2CDriverBase):
             if get_chip_version:
                 chip_ver = (c_uint8 * 1)()
                 ch347dll.CH34x_GetChipVersion(self._fd, chip_ver)
-
-        #            ret = ch347dll.CH34xSetStream(self._fd, self.baudrate.value)
-        #            self._check_ret(ret, "CH34xSetStream")
         else:
             raise I2COperationFailedError(
                 "CH347OpenDevice(%s) failed!" % self.device_path
