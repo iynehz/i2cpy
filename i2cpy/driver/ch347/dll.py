@@ -27,10 +27,10 @@ def load() -> CDLL:
         funcs = [
             "CH347OpenDevice",
             "CH347CloseDevice",
-            #"CH347SetStream",
+            # "CH347SetStream",
             "CH347StreamI2C",
-            #"CH347WiteData",
-            #"CH347WriteRead",
+            # "CH347WiteData",
+            # "CH347WriteRead",
             "CH347StreamI2CRetAck",
         ]
 

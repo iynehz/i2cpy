@@ -6,7 +6,6 @@ from enum import Enum
 from typing import List, Optional, Type
 
 
-
 try:
     from collections.abc import Buffer
 except ImportError:
@@ -78,8 +77,8 @@ class CH347(I2CDriverBase):
 
     def _init_nt(self):
         if ch347dll.CH347OpenDevice(self._fd) != -1:
-            #ret = ch347dll.CH347SetStream(self._fd, self.baudrate.value)
-            #self._check_ret(ret, "CH341SetStream")
+            # ret = ch347dll.CH347SetStream(self._fd, self.baudrate.value)
+            # self._check_ret(ret, "CH341SetStream")
             pass
         else:
             raise I2COperationFailedError("CH347OpenDevice")
@@ -98,8 +97,8 @@ class CH347(I2CDriverBase):
                 chip_ver = (c_uint8 * 1)()
                 ret = ch347dll.CH34x_GetChipVersion(self._fd, chip_ver)
 
-#            ret = ch347dll.CH34xSetStream(self._fd, self.baudrate.value)
-#            self._check_ret(ret, "CH34xSetStream")
+        #            ret = ch347dll.CH34xSetStream(self._fd, self.baudrate.value)
+        #            self._check_ret(ret, "CH34xSetStream")
         else:
             raise I2COperationFailedError(
                 "CH347OpenDevice(%s) failed!" % self.device_path
@@ -125,7 +124,6 @@ class CH347(I2CDriverBase):
             nbytes = len(rbuf)
             obuf = (c_byte * nbytes).from_buffer(rbuf)
         ret = ch347dll.CH347StreamI2C(self._fd, len(ibuf), ibuf, nbytes, obuf)
-        #ret = ch347dll.CH347StreamI2CRetAck(self._fd, len(ibuf), ibuf, nbytes, obuf, cc)
         self._check_ret(ret, "CH347StreamI2C")
 
     def _write(self, buf: Buffer):
@@ -150,62 +148,25 @@ class CH347(I2CDriverBase):
         wbuf = bytes(i2c_addr_byte(addr)) + memaddr_to_bytes(memaddr, addrsize)
         self._writeread_into(wbuf, buf)
 
-    def _start(self):
-        """Generate a START condition on the bus
-        (SDA transitions to low while SCL is high).
-        """
-        buf = (c_byte * 3)(
-            mCH347A_CMD_I2C_STREAM, mCH347A_CMD_I2C_STM_STA, mCH347A_CMD_I2C_STM_END
-        )
-        iolength = (c_ulong * 1)(len(buf))
-        ret = ch347dll.CH347WriteData(self._fd, buf, iolength)
-        self._check_ret(ret, "CH347WriteData")
-
-    def _stop(self):
-        """Generate a STOP condition on the bus
-        (SDA transitions to high while SCL is high).
-        """
-        buf = (c_byte * 3)(
-            mCH347A_CMD_I2C_STREAM, mCH347A_CMD_I2C_STM_STO, mCH347A_CMD_I2C_STM_END
-        )
-        iolength = (c_ulong * 1)(len(buf))
-        ret = ch347dll.CH347WriteData(self._fd, buf, iolength)
-        self._check_ret(ret, "CH347WriteData")
-
     def _out_byte_check_ack(self, obyte: int) -> bool:
         buf = [obyte]
         write_buffer = create_string_buffer(bytes(buf))
-        write_length = len(write_buffer)
-
         ack_count = c_ulong(0)
-        #ret = ch347dll.CH347WriteRead(
-        #    self._fd, len(buf), buf, mCH347A_CMD_I2C_STM_MAX, 1, ilen, ibuf
-        #)
         ret = ch347dll.CH347StreamI2C_RetACK(
             self._fd, 1, write_buffer, None, None, byref(ack_count)
         )
         self._check_ret(ret, "CH347StreamI2C_RetACK")
-        return ack_count.value
-        #return ilen[0] > 0 and ibuf[ilen[0] - 1] & 0x80 == 0
+        return ack_count.value > 0
 
     def check_device(self, addr: int | Buffer) -> bool:
-        self._start()
-        try:
-            obyte = i2c_addr_byte(addr)[0]
-            return self._out_byte_check_ack(obyte)
-        finally:
-            self._stop()
+        obyte = i2c_addr_byte(addr)[0]
+        return self._out_byte_check_ack(obyte)
 
     @classmethod
     def _check_ret(cls, result: int, operation: str):
-        #print("pippo")
-        #print(result)
         if not result:
             raise I2COperationFailedError(operation)
-            #print("raise")
-        #else:
-            #print("ok")
-            #print(not result)
+
 
 def driver_class() -> Type[I2CDriverBase]:
     return CH347
