@@ -23,16 +23,32 @@ class BaudRate(Enum):
     BAUD400K = 2
     BAUD750K = 3
 
+class BaudRate(Enum):
+    BAUD20K = 0
+    BAUD100K = 1
+    BAUD400K = 2
+    BAUD750K = 3
+    BAUD50K = 4
+    BAUD200K = 5
+    BAUD1M = 6
+
     @classmethod
     def from_number(cls, freq: int | float) -> BaudRate:
+        if freq >= 1000e3:
+            return BaudRate.BAUD1M
         if freq >= 750e3:
             return BaudRate.BAUD750K
         if freq >= 400e3:
             return BaudRate.BAUD400K
         if freq >= 100e3:
+            return BaudRate.BAUD200K
+        if freq >= 200e3:
+            return BaudRate.BAUD100K
+        if freq >= 100e3:
+            return BaudRate.BAUD50K
+        if freq >= 50e3:
             return BaudRate.BAUD100K
         return BaudRate.BAUD20K
-
 
 class CH347(I2CDriverBase):
     def __init__(self, id: Optional[int | str] = None, *, freq: int | float = 400000):
@@ -68,6 +84,8 @@ class CH347(I2CDriverBase):
 
     def _init_nt(self):
         if ch347dll.CH347OpenDevice(self._fd) != -1:
+            ret = ch347dll.CH347I2C_Set(self._fd, self.baudrate.value)
+            self._check_ret(ret, "CH347I2C_Set")
             # ret = ch347dll.CH347SetStream(self._fd, self.baudrate.value)
             # self._check_ret(ret, "CH341SetStream")
             pass
