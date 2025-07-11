@@ -16,13 +16,6 @@ from .dll import ch347dll
 from ..abc import I2CDriverBase, i2c_addr_byte, to_buffer, memaddr_to_bytes
 from ...errors import I2COperationFailedError
 
-
-class BaudRate(Enum):
-    BAUD20K = 0
-    BAUD100K = 1
-    BAUD400K = 2
-    BAUD750K = 3
-
 class BaudRate(Enum):
     BAUD20K = 0
     BAUD100K = 1
