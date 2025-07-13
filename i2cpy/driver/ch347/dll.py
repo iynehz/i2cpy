@@ -1,11 +1,10 @@
 import sys
 import os
-import re
 
 if sys.platform == "win32":
     from ctypes import windll, CDLL
 else:
-    from ctypes import cdll, CDLL, c_char_p, c_int32, c_uint8
+    from ctypes import cdll, CDLL
 
 
 def load() -> CDLL:
