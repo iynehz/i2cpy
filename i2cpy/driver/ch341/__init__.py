@@ -96,9 +96,7 @@ class CH341(I2CDriverBase):
                 chip_ver = (c_uint8 * 1)()
                 ch341dll.CH34x_GetChipVersion(self._fd, chip_ver)
         else:
-            raise I2COperationFailedError(
-                "CH341OpenDevice(%s) failed!" % self.device_path
-            )
+            raise I2COperationFailedError("CH341OpenDevice(%s)" % self.device_path)
 
     def deinit(self):
         """Close the I2C bus."""
