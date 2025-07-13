@@ -23,3 +23,8 @@ class I2CMemoryAddressSizeError(I2CError):
     def __init__(self, addrsize):
         msg = "Bad I2C memory address size: {}".format(addrsize)
         super().__init__(msg)
+
+
+class I2CUnsupportedError(I2CError):
+    def __init__(self, message: str):
+        super().__init__(message)

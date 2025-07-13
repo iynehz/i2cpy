@@ -59,7 +59,7 @@ except ImportError:
     from typing_extensions import Buffer
 
 from i2cpy.driver.abc import memaddr_to_bytes
-from i2cpy.errors import I2CInvalidDriverError
+from i2cpy.errors import I2CInvalidDriverError, I2CUnsupportedError
 
 
 from i2cpy._version import __version__  # noqa: F401
@@ -210,4 +210,9 @@ class I2C:
         :param stop: stop address, defaults to 0x77
         :return: a list of addresses that respond to scan
         """
+        if not self.driver.supports_scan():
+            raise I2CUnsupportedError(
+                f'Driver "{self.driver_name}" does not support scan() on this OS platform'
+            )
+
         return [a for a in range(start, stop + 1) if self.driver.check_device(a)]

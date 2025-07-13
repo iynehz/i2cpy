@@ -189,6 +189,9 @@ class CH341(I2CDriverBase):
         finally:
             self._stop()
 
+    def supports_scan(self) -> bool:
+        return hasattr(ch341dll, "CH341WriteRead")
+
     @classmethod
     def _check_ret(cls, result: int, operation: str):
         if not result:

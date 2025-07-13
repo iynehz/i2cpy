@@ -153,15 +153,23 @@ class CH347(I2CDriverBase):
         buf = [obyte]
         write_buffer = create_string_buffer(bytes(buf))
         ack_count = c_ulong(0)
-        ret = ch347dll.CH347StreamI2C_RetACK(
-            self._fd, 1, write_buffer, None, None, byref(ack_count)
-        )
+        try:
+            ret = ch347dll.CH347StreamI2C_RetACK(
+                self._fd, 1, write_buffer, None, None, byref(ack_count)
+            )
+        except OSError:
+            # if handler closed above dll call returns OSError
+            raise I2COperationFailedError("CH347StreamI2C_RetACK") from None
+
         self._check_ret(ret, "CH347StreamI2C_RetACK")
         return ack_count.value > 0
 
     def check_device(self, addr: int | Buffer) -> bool:
         obyte = i2c_addr_byte(addr)[0]
         return self._out_byte_check_ack(obyte)
+
+    def supports_scan(self) -> bool:
+        return True
 
     @classmethod
     def _check_ret(cls, result: int, operation: str):
