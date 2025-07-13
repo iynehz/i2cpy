@@ -46,7 +46,7 @@ class CH341(I2CDriverBase):
     def __init__(self, id: Optional[int | str] = None, *, freq: int | float = 400000):
         """Initializes the CH341 I2C driver.
 
-        :param id: CH341 device index number.
+        :param id: Device index number.
             On Windows it's an integer and default is 0.
             On posix systems it can be either a string like "/dev/ch34x_pis0"
             or an integer like 0 that would be internally mapped to the string

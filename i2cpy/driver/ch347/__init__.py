@@ -51,7 +51,7 @@ class CH347(I2CDriverBase):
     def __init__(self, id: Optional[int | str] = None, *, freq: int | float = 400000):
         """Initializes the CH347 I2C driver.
 
-        :param id: CH341 device index number.
+        :param id: Device index number.
             On Windows it's an integer and default is 0.
             On posix systems it can be either a string like "/dev/ch34x_pis0"
             or an integer like 0 that would be internally mapped to the string
@@ -78,6 +78,11 @@ class CH347(I2CDriverBase):
             self._init_nt()
         else:
             self._init_posix()
+
+        if hasattr(ch347dll, "CH34x_GetChipType"):
+            chip_type = c_ulong(0)
+            ret = ch347dll.CH34x_GetChipType(self._fd, byref(chip_type))
+            self._check_ret(ret, "CH34x_GetChipType")
 
         # set baudrate
         ret = ch347dll.CH347I2C_Set(self._fd, self.baudrate.value)

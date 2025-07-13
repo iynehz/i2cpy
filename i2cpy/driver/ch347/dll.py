@@ -21,9 +21,6 @@ def load() -> CDLL:
     else:
         dll = cdll.LoadLibrary(dll_name)
 
-        dll.CH34xOpenDevice.argtypes = (c_char_p,)
-        dll.CH34xSetStream.argtypes = (c_int32, c_uint8)
-
         # Unfortunately QingHeng does not well align their API names across OS platforms...
         dll.CH347StreamI2C_RetACK = dll.CH347StreamI2C_RetAck
 
