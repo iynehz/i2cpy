@@ -42,7 +42,7 @@ The CH341 series chip (like CH341A) is USB bus converter which converts USB to U
 port, and common synchronous serial communication interfaces (I2C, SPI).
 The chip is manufactured by the company `Qinheng Microelectronics <https://wch-ic.com/>`_.
 
-The ch341 driver shipped with this library is a Python interface to CH341's
+The "ch341" driver shipped with this library is a Python interface to CH341's
 official DLLs.
 
 You need the driver DLL files, which are downloadable from Qinheng's website.
@@ -93,7 +93,32 @@ Example usage:
 
   i2c = I2C(0)                                    # override usb id
 
-  i2c = I2C("/dev/ch34x_pis0")                    # override usb device on Linux
+  i2c = I2C("/dev/ch34x_pis0")                    # override device path on Linux
+
+ch347
+-----
+
+The CH347 series chip (like CH347T) is also USB bus converter manufactured by
+The chip is manufactured by the Qinheng Microelectronics.
+
+The "ch347" driver shipped with this library is a Python interface to CH347's
+official DLLs.
+
+You need the driver DLL files, which are downloadable from Qinheng's website.
+As they are actually the same downloadable files as that of CH341, see
+:ref:`ch341` section above for how to install.
+
+Example usage:
+
+.. code-block:: python
+
+  from i2cpy import I2C
+
+  i2c = I2C(driver="ch347")                       # specify ch347 driver
+
+  i2c = I2C(0, driver="ch347")                    # override usb id
+
+  i2c = I2C("/dev/ch34x_pis0", driver="ch347")    # override device path on Linux
    
 
 Class I2C

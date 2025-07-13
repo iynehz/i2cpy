@@ -5,12 +5,14 @@ respectively.
 I2C objects are created attached to a specific bus. They can be initialized
 when created, or initialized later on.
 
-This library is designed to support different I2C driver implementations. At
-present below drivers are supported:
+This library is designed to support different I2C driver implementations.
+At present below drivers are supported:
 
-* CH341 (CH341A, etc)
+* `CH341 <https://www.wch-ic.com/downloads/CH341DS1_PDF.html>`_
+* `CH347 <https://www.wch-ic.com/downloads/CH344DS1_PDF.html>`_
 
-The interface is similar to that of MicroPython's `machine.I2C <https://docs.micropython.org/en/latest/library/machine.I2C.html>`_
+The interface is similar to that of MicroPython's `machine.I2C
+<https://docs.micropython.org/en/latest/library/machine.I2C.html>`_
 
 Example usage:
 
@@ -57,7 +59,7 @@ except ImportError:
     from typing_extensions import Buffer
 
 from i2cpy.driver.abc import memaddr_to_bytes
-from i2cpy.errors import I2CInvalidDriverError
+from i2cpy.errors import I2CInvalidDriverError, I2CUnsupportedError
 
 
 from i2cpy._version import __version__  # noqa: F401
@@ -85,7 +87,7 @@ class I2C:
             module name shipped with this library. For example "foo" means module
             "i2cpy.driver.foo".
             If not specified, it looks at environment variable "I2CPY_DRIVER".
-            And if that's not defined or empty, it finally falls back to "ch341".
+            And if that's not defined or is empty, it finally falls back to "ch341".
         :param auto_init: Call `init()` on object initialization, defaults to True
         """
         self.index = id
@@ -201,8 +203,16 @@ class I2C:
         A device responds if it pulls the SDA line low after its address
         (including a write bit) is sent on the bus.
 
+        Depending on the specific driver and OS platform, scan() may or may not
+        work.
+
         :param start: start address, defaults to 0x08
         :param stop: stop address, defaults to 0x77
         :return: a list of addresses that respond to scan
         """
+        if not self.driver.supports_scan():
+            raise I2CUnsupportedError(
+                f'Driver "{self.driver_name}" does not support scan() on this OS platform'
+            )
+
         return [a for a in range(start, stop + 1) if self.driver.check_device(a)]

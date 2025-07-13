@@ -46,7 +46,7 @@ class CH341(I2CDriverBase):
     def __init__(self, id: Optional[int | str] = None, *, freq: int | float = 400000):
         """Initializes the CH341 I2C driver.
 
-        :param id: CH341 device index number.
+        :param id: Device index number.
             On Windows it's an integer and default is 0.
             On posix systems it can be either a string like "/dev/ch34x_pis0"
             or an integer like 0 that would be internally mapped to the string
@@ -74,11 +74,12 @@ class CH341(I2CDriverBase):
         else:
             self._init_posix()
 
+        # set baudrate
+        ret = ch341dll.CH341SetStream(self._fd, self.baudrate.value)
+        self._check_ret(ret, "CH341SetStream")
+
     def _init_nt(self):
-        if ch341dll.CH341OpenDevice(self._fd) != -1:
-            ret = ch341dll.CH341SetStream(self._fd, self.baudrate.value)
-            self._check_ret(ret, "CH341SetStream")
-        else:
+        if ch341dll.CH341OpenDevice(self._fd) < 0:
             raise I2COperationFailedError("CH341OpenDevice")
 
     def _init_posix(self):
@@ -93,14 +94,9 @@ class CH341(I2CDriverBase):
             get_chip_version = getattr(ch341dll, "CH34x_GetChipVersion")
             if get_chip_version:
                 chip_ver = (c_uint8 * 1)()
-                ret = ch341dll.CH34x_GetChipVersion(self._fd, chip_ver)
-
-            ret = ch341dll.CH34xSetStream(self._fd, self.baudrate.value)
-            self._check_ret(ret, "CH34xSetStream")
+                ch341dll.CH34x_GetChipVersion(self._fd, chip_ver)
         else:
-            raise I2COperationFailedError(
-                "CH341OpenDevice(%s) failed!" % self.device_path
-            )
+            raise I2COperationFailedError("CH341OpenDevice(%s)" % self.device_path)
 
     def deinit(self):
         """Close the I2C bus."""
@@ -190,6 +186,9 @@ class CH341(I2CDriverBase):
             return self._out_byte_check_ack(obyte)
         finally:
             self._stop()
+
+    def supports_scan(self) -> bool:
+        return hasattr(ch341dll, "CH341WriteRead")
 
     @classmethod
     def _check_ret(cls, result: int, operation: str):

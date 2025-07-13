@@ -32,8 +32,8 @@ def test_invalid_device():
 def test_scan():
     i2c = I2C()
 
-    if not hasattr(i2c.driver, "CH341WriteRead"):
-        pytest.skip("Skipping as CH341WriteRead not found")
+    if not i2c.driver.supports_scan():
+        pytest.skip("Skipping as scan() not supported")
 
     assert i2c.scan() == [addr]
 

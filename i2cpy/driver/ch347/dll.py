@@ -1,11 +1,10 @@
 import sys
 import os
-import re
 
 if sys.platform == "win32":
     from ctypes import windll, CDLL
 else:
-    from ctypes import cdll, CDLL, c_char_p, c_int32, c_uint8
+    from ctypes import cdll, CDLL
 
 
 def load() -> CDLL:
@@ -21,26 +20,8 @@ def load() -> CDLL:
     else:
         dll = cdll.LoadLibrary(dll_name)
 
-        dll.CH34xOpenDevice.argtypes = (c_char_p,)
-        dll.CH34xSetStream.argtypes = (c_int32, c_uint8)
-
-        funcs = [
-            "CH347OpenDevice",
-            "CH347CloseDevice",
-            # "CH347SetStream",
-            "CH347StreamI2C",
-            # "CH347WiteData",
-            # "CH347WriteRead",
-            "CH347StreamI2CRetAck",
-            "CH347I2C_Set",
-        ]
-
-        for fname in funcs:
-            if not getattr(dll, fname, None):
-                fname2 = re.sub(r"^CH347", "CH34x", fname)
-                f = getattr(dll, fname2, None)
-                if f is not None:
-                    setattr(dll, fname, f)
+        # Unfortunately QingHeng does not well align their API names across OS platforms...
+        dll.CH347StreamI2C_RetACK = dll.CH347StreamI2C_RetAck  # type: ignore[attr-defined]
 
         return dll
 

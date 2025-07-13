@@ -130,5 +130,12 @@ class I2CDriverBase(ABC):
         :return: True if device responds.
         """
 
+    @abstractmethod
+    def supports_scan(self) -> bool:
+        """Checks if driver supports scan() or not.
+
+        :return: True if scan() is supported.
+        """
+
 
 I2CDriver = TypeVar("I2CDriver", bound=I2CDriverBase)

@@ -16,11 +16,16 @@ from .dll import ch347dll
 from ..abc import I2CDriverBase, i2c_addr_byte, to_buffer, memaddr_to_bytes
 from ...errors import I2COperationFailedError
 
+
 class BaudRate(Enum):
     BAUD20K = 0
     BAUD100K = 1
     BAUD400K = 2
     BAUD750K = 3
+
+    # While CH347's Application Development Manual V1.4 claims to support below
+    # baudrates, as I tried it on Windows they don't really work and they fall
+    # back to above baudrates.
     BAUD50K = 4
     BAUD200K = 5
     BAUD1M = 6
@@ -33,21 +38,20 @@ class BaudRate(Enum):
             return BaudRate.BAUD750K
         if freq >= 400e3:
             return BaudRate.BAUD400K
-        if freq >= 100e3:
-            return BaudRate.BAUD200K
         if freq >= 200e3:
-            return BaudRate.BAUD100K
+            return BaudRate.BAUD200K
         if freq >= 100e3:
-            return BaudRate.BAUD50K
-        if freq >= 50e3:
             return BaudRate.BAUD100K
+        if freq >= 50e3:
+            return BaudRate.BAUD50K
         return BaudRate.BAUD20K
+
 
 class CH347(I2CDriverBase):
     def __init__(self, id: Optional[int | str] = None, *, freq: int | float = 400000):
         """Initializes the CH347 I2C driver.
 
-        :param id: CH341 device index number.
+        :param id: Device index number.
             On Windows it's an integer and default is 0.
             On posix systems it can be either a string like "/dev/ch34x_pis0"
             or an integer like 0 that would be internally mapped to the string
@@ -75,14 +79,17 @@ class CH347(I2CDriverBase):
         else:
             self._init_posix()
 
+        if hasattr(ch347dll, "CH34x_GetChipType"):
+            chip_type = c_ulong(0)
+            ret = ch347dll.CH34x_GetChipType(self._fd, byref(chip_type))
+            self._check_ret(ret, "CH34x_GetChipType")
+
+        # set baudrate
+        ret = ch347dll.CH347I2C_Set(self._fd, self.baudrate.value)
+        self._check_ret(ret, "CH347I2C_Set")
+
     def _init_nt(self):
-        if ch347dll.CH347OpenDevice(self._fd) != -1:
-            ret = ch347dll.CH347I2C_Set(self._fd, self.baudrate.value)
-            self._check_ret(ret, "CH347I2C_Set")
-            # ret = ch347dll.CH347SetStream(self._fd, self.baudrate.value)
-            # self._check_ret(ret, "CH341SetStream")
-            pass
-        else:
+        if ch347dll.CH347OpenDevice(self._fd) < 0:
             raise I2COperationFailedError("CH347OpenDevice")
 
     def _init_posix(self):
@@ -98,13 +105,8 @@ class CH347(I2CDriverBase):
             if get_chip_version:
                 chip_ver = (c_uint8 * 1)()
                 ch347dll.CH34x_GetChipVersion(self._fd, chip_ver)
-
-        #            ret = ch347dll.CH34xSetStream(self._fd, self.baudrate.value)
-        #            self._check_ret(ret, "CH34xSetStream")
         else:
-            raise I2COperationFailedError(
-                "CH347OpenDevice(%s) failed!" % self.device_path
-            )
+            raise I2COperationFailedError("CH347OpenDevice(%s)" % self.device_path)
 
     def deinit(self):
         """Close the I2C bus."""
@@ -154,15 +156,23 @@ class CH347(I2CDriverBase):
         buf = [obyte]
         write_buffer = create_string_buffer(bytes(buf))
         ack_count = c_ulong(0)
-        ret = ch347dll.CH347StreamI2C_RetACK(
-            self._fd, 1, write_buffer, None, None, byref(ack_count)
-        )
+        try:
+            ret = ch347dll.CH347StreamI2C_RetACK(
+                self._fd, 1, write_buffer, None, None, byref(ack_count)
+            )
+        except OSError:
+            # if handler closed above dll call returns OSError
+            raise I2COperationFailedError("CH347StreamI2C_RetACK") from None
+
         self._check_ret(ret, "CH347StreamI2C_RetACK")
         return ack_count.value > 0
 
     def check_device(self, addr: int | Buffer) -> bool:
         obyte = i2c_addr_byte(addr)[0]
         return self._out_byte_check_ack(obyte)
+
+    def supports_scan(self) -> bool:
+        return True
 
     @classmethod
     def _check_ret(cls, result: int, operation: str):
