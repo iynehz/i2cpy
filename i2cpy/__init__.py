@@ -153,7 +153,7 @@ class I2C:
         :param addr: I2C peripheral device address
         :param memaddr: memory address
         :param buf: buffer to store the bytes read
-        :param addrsize: _description_, defaults to 8
+        :param addrsize: address size in bits, defaults to 8
         """
         return self.driver.readfrom_mem_into(addr, memaddr, buf, addrsize=addrsize)
 
@@ -171,7 +171,7 @@ class I2C:
         :param addr: I2C peripheral device address
         :param memaddr: memory address
         :param nbytes: number of bytes to read
-        :param addrsize: _description_, defaults to 8
+        :param addrsize: address size in bits, defaults to 8
         :return: the bytes read
         """
         buf = bytearray(nbytes)
@@ -192,7 +192,7 @@ class I2C:
         :param addr: I2C peripheral device address
         :param memaddr: memory address
         :param buf: bytes to write
-        :param addrsize: _description_, defaults to 8
+        :param addrsize: address size in bits, defaults to 8
         """
         wbuf = memaddr_to_bytes(memaddr, addrsize) + buf
         self.writeto(addr, wbuf)
