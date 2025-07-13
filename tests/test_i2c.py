@@ -1,14 +1,16 @@
-# I have a single-byte-addr I2C flash mem for the test.
-
+# See board/eeprom_board for my test board
 import pytest
 
 import os
+import time
 from typing import List
+
 from i2cpy import I2C
 from i2cpy.errors import *
 
 
-addr = 0x17
+addr_24c02 = 0x51
+addr_24c32 = 0x52
 
 
 def test_driver():
@@ -35,7 +37,7 @@ def test_scan():
     if not i2c.driver.supports_scan():
         pytest.skip("Skipping as scan() not supported")
 
-    assert i2c.scan() == [addr]
+    assert i2c.scan() == [addr_24c02, addr_24c32]
 
     # now close device and it should error on rest operations
     i2c.deinit()
@@ -56,8 +58,9 @@ def test_scan():
 def test_i2c_mem(memaddr, buf, expected):
     i2c = I2C(freq=100e3)
 
-    i2c.writeto_mem(addr, memaddr, buf)
-    assert i2c.readfrom_mem(addr, memaddr, len(expected)) == expected
+    i2c.writeto_mem(addr_24c02, memaddr, buf)
+    time.sleep(0.01)
+    assert i2c.readfrom_mem(addr_24c02, memaddr, len(expected)) == expected
 
 
 def test_i2c_user_wrapper_funcs():
@@ -65,6 +68,7 @@ def test_i2c_user_wrapper_funcs():
 
     def i2c_write(addr: int, memaddr: int, *args):
         i2c.writeto_mem(addr, memaddr, bytes(args))
+        time.sleep(0.01)
 
     def i2c_read(addr: int, memaddr: int, nbytes: int) -> List[int]:
         got = i2c.readfrom_mem(addr, memaddr, nbytes)
@@ -72,5 +76,5 @@ def test_i2c_user_wrapper_funcs():
 
     memaddr = 0x20
     for data in ([0x55, 0xAA, 0xAA, 0x55], [0x00, 0x00, 0x00, 0x00]):
-        i2c_write(addr, memaddr, *data)
-        assert i2c_read(addr, memaddr, 4) == data
+        i2c_write(addr_24c02, memaddr, *data)
+        assert i2c_read(addr_24c02, memaddr, 4) == data
