@@ -21,7 +21,7 @@ def load() -> CDLL:
         dll = cdll.LoadLibrary(dll_name)
 
         # Unfortunately QingHeng does not well align their API names across OS platforms...
-        dll.CH347StreamI2C_RetACK = dll.CH347StreamI2C_RetAck
+        dll.CH347StreamI2C_RetACK = dll.CH347StreamI2C_RetAck  # type: ignore[attr-defined]
 
         return dll
 
