@@ -127,8 +127,13 @@ class CH347(I2CDriverBase):
         else:
             nbytes = len(rbuf)
             obuf = (c_byte * nbytes).from_buffer(rbuf)
-        ret = ch347dll.CH347StreamI2C(self._fd, len(ibuf), ibuf, nbytes, obuf)
-        self._check_ret(ret, "CH347StreamI2C")
+        ack_count = c_ulong(0)
+        #ret = ch347dll.CH347StreamI2C(self._fd, len(ibuf), ibuf, nbytes, obuf)
+        ret = ch347dll.CH347StreamI2C_RetACK(self._fd, len(ibuf), ibuf, nbytes, obuf, byref(ack_count) )
+        if ack_count == 0:
+            raise I2COperationFailedError("No ACK received from device!")
+        self._check_ret(ret, "CH347StreamI2C_RetACK")
+
 
     def _write(self, buf: Buffer):
         self._writeread_into(buf, None)
