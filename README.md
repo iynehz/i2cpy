@@ -226,7 +226,7 @@ memory address specified by memaddr.
   * **addr** (`int`) – I2C peripheral device address
   * **memaddr** (`int`) – memory address
   * **buf** (`Buffer`) – bytes to write
-  * **addrsize** (`int`) – \_description_, defaults to 8
+  * **addrsize** (`int`) – address size in bits, defaults to 8
 
 #### I2C.readfrom_mem(addr, memaddr, nbytes, \*, addrsize=8)
 
@@ -237,7 +237,7 @@ the memory address specified by *memaddr*.
   * **addr** (`int`) – I2C peripheral device address
   * **memaddr** (`int`) – memory address
   * **nbytes** (`int`) – number of bytes to read
-  * **addrsize** (`int`) – \_description_, defaults to 8
+  * **addrsize** (`int`) – address size in bits, defaults to 8
 * **Return type:**
   `bytes`
 * **Returns:**
@@ -253,4 +253,4 @@ length of buf.
   * **addr** (`int`) – I2C peripheral device address
   * **memaddr** (`int`) – memory address
   * **buf** (`bytearray`) – buffer to store the bytes read
-  * **addrsize** (`int`) – \_description_, defaults to 8
+  * **addrsize** (`int`) – address size in bits, defaults to 8
