@@ -31,5 +31,8 @@ Homepage = "https://github.com/iynehz/i2cpy"
 Documentation = "https://i2cpy.readthedocs.io/en/latest/"
 Repository = "https://github.com/iynehz/i2cpy"
 
+[tool.setuptools]
+packages = ["i2cpy"]
+
 [tool.setuptools.dynamic]
 version = { attr = "i2cpy.__version__" }
