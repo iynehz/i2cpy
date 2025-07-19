@@ -6,6 +6,10 @@
 
 - ch347 driver support.
 
+### Changed
+
+- Dropped Python 3.8 support. This library now requires Python >=3.9.
+
 ### Fixed
 
 - Linux: ch341 with QingHeng's official driver version 1.5, although scan() is
@@ -47,7 +51,7 @@
 
 ### Fixed
 
-- Fix Python 3.8 compatibility. And minimally require Python 3.8.
+- Fix Python 3.8 compatibility. And minimally requires Python 3.8.
 
 ## [0.1.1] - 2024-06-01
 
