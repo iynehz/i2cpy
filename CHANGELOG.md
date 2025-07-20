@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.2.1] - 2025-07-20
+
+### Changed
+
+- Make ch347 error message explicit when no ACK is received from device.
+
 ## [0.2.0] - 2025-07-13
 
 ### Added
