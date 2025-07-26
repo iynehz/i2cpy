@@ -21,7 +21,7 @@ This library is designed to support different I2C driver implementations.
 At present below drivers are supported:
 
 * [CH341](https://www.wch-ic.com/downloads/CH341DS1_PDF.html)
-* [CH347](https://www.wch-ic.com/downloads/CH344DS1_PDF.html)
+* [CH347](https://www.wch-ic.com/downloads/CH347DS1_PDF.html)
 
 The interface is similar to that of MicroPython’s [machine.I2C](https://docs.micropython.org/en/latest/library/machine.I2C.html)
 
