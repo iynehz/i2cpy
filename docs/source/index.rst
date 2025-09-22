@@ -150,3 +150,26 @@ Memory operations
 .. automethod:: i2cpy.I2C.writeto_mem
 .. automethod:: i2cpy.I2C.readfrom_mem
 .. automethod:: i2cpy.I2C.readfrom_mem_into
+
+Nuitka
+======
+
+If you use `Nuitka <https://nuitka.net/>`_ to package your Python code that uses
+i2cpy, you need to specify the implicit-imported module, as otherwise Nuitka
+won't be able to find by itself. For example you can use a
+`nuitka-package.config.yml` file with below content.
+
+.. code-block:: yaml
+
+  - module-name: 'i2cpy'
+    implicit-imports:
+      - depends: 
+        - 'i2cpy.driver.ch341'
+
+And run the nuitka command like,
+
+.. code-block:: cmd
+
+  nuitka --standalone --onefile --user-package-configuration-file=nuitka-package.config.yml your_script.py
+
+For other packaging tools like Pyinstaller, etc., the idea is similar.

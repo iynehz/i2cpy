@@ -150,7 +150,7 @@ i2c = I2C("/dev/ch34x_pis0", driver="ch347")    # override device path on Linux
 
 ### Constructor
 
-#### I2C.\_\_init_\_(id=None, \*, driver=None, freq=400000, auto_init=True, \*\*kwargs)
+#### I2C.\_\_init_\_(id=None, , driver=None, freq=400000, auto_init=True, \*\*kwargs)
 
 Constructor.
 
@@ -195,7 +195,7 @@ work.
 
 ### Standard bus operations
 
-#### I2C.writeto(addr, buf, /)
+#### I2C.writeto(addr, buf,)
 
 Write the bytes from buf to the peripheral specified by addr.
 
@@ -203,7 +203,7 @@ Write the bytes from buf to the peripheral specified by addr.
   * **addr** (`int`) – I2C peripheral deivce address
   * **buf** (`Buffer`) – bytes to write
 
-#### I2C.readfrom(addr, nbytes, /)
+#### I2C.readfrom(addr, nbytes,)
 
 Read nbytes from the peripheral specified by addr.
 
@@ -217,7 +217,7 @@ Read nbytes from the peripheral specified by addr.
 
 ### Memory operations
 
-#### I2C.writeto_mem(addr, memaddr, buf, \*, addrsize=8)
+#### I2C.writeto_mem(addr, memaddr, buf, , addrsize=8)
 
 Write buf to the peripheral specified by addr starting from the
 memory address specified by memaddr.
@@ -228,7 +228,7 @@ memory address specified by memaddr.
   * **buf** (`Buffer`) – bytes to write
   * **addrsize** (`int`) – address size in bits, defaults to 8
 
-#### I2C.readfrom_mem(addr, memaddr, nbytes, \*, addrsize=8)
+#### I2C.readfrom_mem(addr, memaddr, nbytes, , addrsize=8)
 
 Read *nbytes* from the peripheral specified by *addr* starting from
 the memory address specified by *memaddr*.
@@ -243,7 +243,7 @@ the memory address specified by *memaddr*.
 * **Returns:**
   the bytes read
 
-#### I2C.readfrom_mem_into(addr, memaddr, buf, \*, addrsize=8)
+#### I2C.readfrom_mem_into(addr, memaddr, buf, , addrsize=8)
 
 Read into buf from the peripheral specified by addr starting from the
 memory address specified by memaddr. The number of bytes read is the
@@ -254,3 +254,25 @@ length of buf.
   * **memaddr** (`int`) – memory address
   * **buf** (`bytearray`) – buffer to store the bytes read
   * **addrsize** (`int`) – address size in bits, defaults to 8
+
+## Nuitka
+
+If you use [Nuitka](https://nuitka.net/) to package your Python code that uses
+i2cpy, you need to specify the implicit-imported module, as otherwise Nuitka
+won’t be able to find by itself. For example you can use a
+nuitka-package.config.yml file with below content.
+
+```yaml
+- module-name: 'i2cpy'
+  implicit-imports:
+    - depends:
+      - 'i2cpy.driver.ch341'
+```
+
+And run the nuitka command like,
+
+```cmd
+nuitka --standalone --onefile --user-package-configuration-file=nuitka-package.config.yml your_script.py
+```
+
+For other packaging tools like Pyinstaller, etc., the idea is similar.
