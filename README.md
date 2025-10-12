@@ -68,7 +68,8 @@ corresponding drivers.
 
 ### ch341
 
-The CH341 series chip (like CH341A) is USB bus converter which converts USB to UART, parallel
+The [CH341](https://www.wch-ic.com/products/CH341.html) series chip (like CH341A)
+is USB bus converter which converts USB to UART, parallel
 port, and common synchronous serial communication interfaces (I2C, SPI).
 The chip is manufactured by the company [Qinheng Microelectronics](https://wch-ic.com/).
 
@@ -124,8 +125,8 @@ i2c = I2C("/dev/ch34x_pis0")                    # override device path on Linux
 
 ### ch347
 
-The CH347 series chip (like CH347T) is also USB bus converter manufactured by
-The chip is manufactured by the Qinheng Microelectronics.
+The CH347 series chip (like CH347T) is USB bus converter manufactured also by
+Qinheng Microelectronics.
 
 The “ch347” driver shipped with this library is a Python interface to CH347’s
 official DLLs.
@@ -150,7 +151,7 @@ i2c = I2C("/dev/ch34x_pis0", driver="ch347")    # override device path on Linux
 
 ### Constructor
 
-#### I2C.\_\_init_\_(id=None, , driver=None, freq=400000, auto_init=True, \*\*kwargs)
+#### I2C.\_\_init_\_(id=None, \*, driver=None, freq=400000, auto_init=True, \*\*kwargs)
 
 Constructor.
 
@@ -195,7 +196,7 @@ work.
 
 ### Standard bus operations
 
-#### I2C.writeto(addr, buf,)
+#### I2C.writeto(addr, buf, /)
 
 Write the bytes from buf to the peripheral specified by addr.
 
@@ -203,7 +204,7 @@ Write the bytes from buf to the peripheral specified by addr.
   * **addr** (`int`) – I2C peripheral deivce address
   * **buf** (`Buffer`) – bytes to write
 
-#### I2C.readfrom(addr, nbytes,)
+#### I2C.readfrom(addr, nbytes, /)
 
 Read nbytes from the peripheral specified by addr.
 
@@ -217,7 +218,7 @@ Read nbytes from the peripheral specified by addr.
 
 ### Memory operations
 
-#### I2C.writeto_mem(addr, memaddr, buf, , addrsize=8)
+#### I2C.writeto_mem(addr, memaddr, buf, \*, addrsize=8)
 
 Write buf to the peripheral specified by addr starting from the
 memory address specified by memaddr.
@@ -228,7 +229,7 @@ memory address specified by memaddr.
   * **buf** (`Buffer`) – bytes to write
   * **addrsize** (`int`) – address size in bits, defaults to 8
 
-#### I2C.readfrom_mem(addr, memaddr, nbytes, , addrsize=8)
+#### I2C.readfrom_mem(addr, memaddr, nbytes, \*, addrsize=8)
 
 Read *nbytes* from the peripheral specified by *addr* starting from
 the memory address specified by *memaddr*.
@@ -243,7 +244,7 @@ the memory address specified by *memaddr*.
 * **Returns:**
   the bytes read
 
-#### I2C.readfrom_mem_into(addr, memaddr, buf, , addrsize=8)
+#### I2C.readfrom_mem_into(addr, memaddr, buf, \*, addrsize=8)
 
 Read into buf from the peripheral specified by addr starting from the
 memory address specified by memaddr. The number of bytes read is the

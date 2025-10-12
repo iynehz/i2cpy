@@ -38,7 +38,8 @@ corresponding drivers.
 ch341
 -----
 
-The CH341 series chip (like CH341A) is USB bus converter which converts USB to UART, parallel
+The `CH341 <https://www.wch-ic.com/products/CH341.html>`_ series chip (like CH341A)
+is USB bus converter which converts USB to UART, parallel
 port, and common synchronous serial communication interfaces (I2C, SPI).
 The chip is manufactured by the company `Qinheng Microelectronics <https://wch-ic.com/>`_.
 
@@ -98,8 +99,8 @@ Example usage:
 ch347
 -----
 
-The CH347 series chip (like CH347T) is also USB bus converter manufactured by
-The chip is manufactured by the Qinheng Microelectronics.
+The CH347 series chip (like CH347T) is USB bus converter manufactured also by
+Qinheng Microelectronics.
 
 The "ch347" driver shipped with this library is a Python interface to CH347's
 official DLLs.
